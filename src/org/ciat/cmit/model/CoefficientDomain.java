@@ -1,4 +1,4 @@
-package jCULcreator;
+package org.ciat.cmit.model;
 
 public class CoefficientDomain {
 

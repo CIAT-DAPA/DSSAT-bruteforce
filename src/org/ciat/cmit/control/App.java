@@ -1,6 +1,8 @@
-package jCULcreator;
+package org.ciat.cmit.control;
 
 import java.util.ArrayList;
+
+import org.ciat.cmit.model.CoefficientDomain;
 
 public class App {
 	private static ArrayList<String> combinations = new ArrayList<String>();
