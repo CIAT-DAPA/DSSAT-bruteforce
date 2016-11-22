@@ -1,0 +1,4 @@
+*MAIZE CULTIVAR COEFFICIENTS: MZCER046 MODEL
+@VAR#  VRNAME.......... EXPNO   ECO#    P1    P2    P5    G2    G3 PHINT
+!                                        1     2     3     4     5     6
+PC0001 2500-2600 GDD        . IB0001 160.0 0.750 780.0 750.0  8.50 49.00
