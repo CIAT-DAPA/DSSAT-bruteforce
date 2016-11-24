@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import org.ciat.cmit.model.CoefficientDomain;
 
 public class App {
-	private static ArrayList<String> combinations = new ArrayList<String>();
 
 	public static void main(String[] args) {
+		ArrayList<String> combinations = new ArrayList<String>();
 
 		CoefficientDomain[] c = new CoefficientDomain[2];
 		c[0] = new CoefficientDomain(100, 200, 10);
@@ -15,8 +15,8 @@ public class App {
 		
 		for (int i = 0; i < c.length; i++) {	
 			combinations=getCombinations(c[i], combinations);
-			System.out.println("iter"+i);
 		}
+		
 
 	}
 
@@ -34,12 +34,19 @@ public class App {
 				for (double j = c.getMinValue(); j <= c.getMaxValue(); j += c.getPeriod()) {
 					temp=combination+" "+j;
 					newCombinations.add(temp);
+
 				}
 			}
 
 
 		}
 		return newCombinations;
+	}
+	
+	public static void printCombinations(ArrayList<String> combinations){
+		for (String combination : combinations) {
+			System.out.println(combination);
+			}
 	}
 
 }
