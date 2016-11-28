@@ -11,8 +11,8 @@ import java.io.PrintWriter;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
-
 import org.ciat.cmit.model.CoefficientDomain;
+import org.ciat.cmit.model.CultivarRun;
 
 public class App {
 
@@ -22,47 +22,92 @@ public class App {
 		/* palvarez test cases */
 		ArrayList<CoefficientDomain> domains = new ArrayList<CoefficientDomain>();
 		domains.add(new CoefficientDomain(17.0, 20.0, 0.15, new DecimalFormat("#0.00")));
-		//c[1] = new CoefficientDomain(2.5, 7.0, 0.3, new DecimalFormat("##0.0"));
-		//c[2] = new CoefficientDomain(9.0, 19.0, 0.3, new DecimalFormat("##0.0"));
-		//c[3] = new CoefficientDomain(11.0, 25.0, 0.3, new DecimalFormat("#0.00"));
+		// c[1] = new CoefficientDomain(2.5, 7.0, 0.3, new DecimalFormat("##0.0"));
+		// c[2] = new CoefficientDomain(9.0, 19.0, 0.3, new DecimalFormat("##0.0"));
+		// c[3] = new CoefficientDomain(11.0, 25.0, 0.3, new DecimalFormat("#0.00"));
 
-		for (CoefficientDomain domain:domains) {
+		for (CoefficientDomain domain : domains) {
 			combinations = getCombinations(domain, combinations);
 		}
-		
+
 		combinations = addPrefixAndSufix(combinations);
 
-		ArrayList<String> cultivars = writeCultivars(combinations);
+		ArrayList<CultivarRun> cultivars = writeCultivars(combinations);
 
-		ArrayList<File> fileXs = writeFileX(cultivars);
-		
-		writeBatch(fileXs);
+		writeFileX(cultivars);
+
+		writeBatch(cultivars);
+
+		writeBats(cultivars);
+
+		writeMasterBat(cultivars);
 	}
 
-	private static void writeBatch(ArrayList<File> fileXs) {
+	private static void writeMasterBat(ArrayList<CultivarRun> cultivars) {
 		PrintWriter writer;
-		String temp="";
 		try {
-			writer = new PrintWriter("dssat_runner\\DSSBacth_drybean.v46");
-			writer.println("$BATCH(DRYBEAN)");
-			writer.println("@FILEX                                                                                        TRTNO     RP     SQ     OP     CO");
-			for (File fileX : fileXs) {
-				temp=String.format("%1$-94s %2$4s %3$6s %4$6s %5$6s %6$6s" , fileX.getAbsolutePath(),1,1,0,0,0);
-				writer.println(temp);
+			File master = new File("dssat_runner\\master" + ".bat");
+			writer = new PrintWriter(master);
+			for (CultivarRun cultivar : cultivars) {
+				writer.println(cultivar.getBat().getAbsolutePath());
 			}
+			writer.println("@echo off");
+			writer.println("pause");
+			writer.println("exit");
+			writer.flush();
 			writer.close();
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
-		
+
 	}
 
-	private static ArrayList<File> writeFileX(ArrayList<String> cultivars) {
-		ArrayList<File> fileXs = new ArrayList<>();
+	private static void writeBats(ArrayList<CultivarRun> cultivars) {
 
-		for (String cultivar : cultivars) {
+		for (CultivarRun cultivar : cultivars) {
+			PrintWriter writer;
+			try {
+				File bat = new File("BATS\\DSSBatch_drybean" + cultivar.getName() + ".bat");
+				cultivar.setBat(bat);
+				writer = new PrintWriter(bat);
+				writer.println("C:\\DSSAT46\\dscsm046 CRGRO046 B " + cultivar.getBatch().getAbsolutePath());
+				writer.println("@echo off");
+				writer.println("exit");
+				writer.flush();
+				writer.close();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+		}
+	}
+
+	private static void writeBatch(ArrayList<CultivarRun> cultivars) {
+
+		String temp = "";
+		for (CultivarRun cultivar : cultivars) {
+			PrintWriter writer;
+			try {
+				File batch = new File("BATCHS\\DSSBatch_drybean" + cultivar.getName() + ".v46");
+				cultivar.setBatch(batch);
+				writer = new PrintWriter(batch);
+				writer.println("$BATCH(DRYBEAN)");
+				writer.println("@FILEX                                                                                        TRTNO     RP     SQ     OP     CO");
+				temp = String.format("%1$-94s %2$4s %3$6s %4$6s %5$6s %6$6s", cultivar.getFileX().getAbsolutePath(), 1, 1, 0, 0, 0);
+				writer.println(temp);
+				writer.flush();
+				writer.close();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+		}
+
+	}
+
+	private static void writeFileX(ArrayList<CultivarRun> cultivars) {
+
+		for (CultivarRun cultivar : cultivars) {
 			File mergedFile = new File("EXPERIMENTS\\CCLA1303_" + cultivar + ".BNX");
-			fileXs.add(mergedFile);
+			cultivar.setFileX(mergedFile);
 			File head = new File("sample\\CCLA1303_head.BNX");
 			File tail = new File("sample\\CCLA1303_tail.BNX");
 
@@ -87,12 +132,11 @@ public class App {
 				}
 
 				inHead.close();
-		
 
-			out.println(" 1 BN "+cultivar+" CALIMA");
+				out.println(" 1 BN " + cultivar + " CALIMA");
 
-			FileInputStream fisTail;
-		
+				FileInputStream fisTail;
+
 				fisTail = new FileInputStream(tail);
 				BufferedReader inTail = new BufferedReader(new InputStreamReader(fisTail));
 
@@ -103,19 +147,17 @@ public class App {
 
 				inTail.close();
 				out.close();
-				
+
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 
-
 		}
 
-		return fileXs;
 	}
 
-	public static ArrayList<String> writeCultivars(ArrayList<String> combinations) {
-		ArrayList<String> cultivars = new ArrayList<>();
+	public static ArrayList<CultivarRun> writeCultivars(ArrayList<String> combinations) {
+		ArrayList<CultivarRun> cultivars = new ArrayList<>();
 		int i = 0;
 		PrintWriter writer;
 		DecimalFormat nf = new DecimalFormat("000000");
@@ -125,7 +167,7 @@ public class App {
 			writer.println("@VAR#  VRNAME.......... EXPNO   ECO#  CSDL PPSEN EM-FL FL-SH FL-SD SD-PM FL-LF LFMAX SLAVR SIZLF  XFRT WTPSD SFDUR SDPDV PODUR THRSH SDPRO SDLIP");
 			writer.println("!                                        1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17    18");
 			for (String combination : combinations) {
-				cultivars.add(nf.format(i++) + "");
+				cultivars.add(new CultivarRun(nf.format(i++) + ""));
 				writer.println(combination);
 			}
 			writer.close();
