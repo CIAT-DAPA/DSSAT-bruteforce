@@ -1,7 +1,6 @@
 package org.ciat.cmit.control;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -9,11 +8,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Scanner;
+
 
 import org.ciat.cmit.model.CoefficientDomain;
 
@@ -23,27 +20,49 @@ public class App {
 		ArrayList<String> combinations = new ArrayList<String>();
 
 		/* palvarez test cases */
-		CoefficientDomain[] c = new CoefficientDomain[4];
-		c[0] = new CoefficientDomain(17.0, 20.0, 0.15, new DecimalFormat("#0.00"));
-		c[1] = new CoefficientDomain(2.5, 7.0, 0.3, new DecimalFormat("##0.0"));
-		c[2] = new CoefficientDomain(9.0, 19.0, 0.3, new DecimalFormat("##0.0"));
-		c[3] = new CoefficientDomain(11.0, 25.0, 0.3, new DecimalFormat("#0.00"));
+		ArrayList<CoefficientDomain> domains = new ArrayList<CoefficientDomain>();
+		domains.add(new CoefficientDomain(17.0, 20.0, 0.15, new DecimalFormat("#0.00")));
+		//c[1] = new CoefficientDomain(2.5, 7.0, 0.3, new DecimalFormat("##0.0"));
+		//c[2] = new CoefficientDomain(9.0, 19.0, 0.3, new DecimalFormat("##0.0"));
+		//c[3] = new CoefficientDomain(11.0, 25.0, 0.3, new DecimalFormat("#0.00"));
 
-		for (int i = 0; i < c.length; i++) {
-			combinations = getCombinations(c[i], combinations);
+		for (CoefficientDomain domain:domains) {
+			combinations = getCombinations(domain, combinations);
 		}
+		
 		combinations = addPrefixAndSufix(combinations);
 
 		ArrayList<String> cultivars = writeCultivars(combinations);
 
-		ArrayList<String> filex = writeFileX(cultivars);
+		ArrayList<File> fileXs = writeFileX(cultivars);
+		
+		writeBatch(fileXs);
 	}
 
-	private static ArrayList<String> writeFileX(ArrayList<String> cultivars) {
-		ArrayList<String> filex = new ArrayList<>();
+	private static void writeBatch(ArrayList<File> fileXs) {
+		PrintWriter writer;
+		String temp="";
+		try {
+			writer = new PrintWriter("dssat_runner\\DSSBacth_drybean.v46");
+			writer.println("$BATCH(DRYBEAN)");
+			writer.println("@FILEX                                                                                        TRTNO     RP     SQ     OP     CO");
+			for (File fileX : fileXs) {
+				temp=String.format("%1$-94s %2$4s %3$6s %4$6s %5$6s %6$6s" , fileX.getAbsolutePath(),1,1,0,0,0);
+				writer.println(temp);
+			}
+			writer.close();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		
+	}
+
+	private static ArrayList<File> writeFileX(ArrayList<String> cultivars) {
+		ArrayList<File> fileXs = new ArrayList<>();
 
 		for (String cultivar : cultivars) {
-			File mergedFile = new File("CCLA1303_" + cultivar + ".BNX");
+			File mergedFile = new File("EXPERIMENTS\\CCLA1303_" + cultivar + ".BNX");
+			fileXs.add(mergedFile);
 			File head = new File("sample\\CCLA1303_head.BNX");
 			File tail = new File("sample\\CCLA1303_tail.BNX");
 
@@ -92,7 +111,7 @@ public class App {
 
 		}
 
-		return filex;
+		return fileXs;
 	}
 
 	public static ArrayList<String> writeCultivars(ArrayList<String> combinations) {
