@@ -8,6 +8,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
@@ -15,6 +17,7 @@ import org.ciat.cmit.model.CoefficientDomain;
 import org.ciat.cmit.model.CultivarRun;
 
 public class App {
+	public static String cultivarDir = "W";
 
 	public static void main(String[] args) {
 		ArrayList<String> combinations = new ArrayList<String>();
@@ -22,9 +25,9 @@ public class App {
 		/* palvarez test cases */
 		ArrayList<CoefficientDomain> domains = new ArrayList<CoefficientDomain>();
 		domains.add(new CoefficientDomain(17.0, 20.0, 0.15, new DecimalFormat("#0.00")));
-		// c[1] = new CoefficientDomain(2.5, 7.0, 0.3, new DecimalFormat("##0.0"));
-		// c[2] = new CoefficientDomain(9.0, 19.0, 0.3, new DecimalFormat("##0.0"));
-		// c[3] = new CoefficientDomain(11.0, 25.0, 0.3, new DecimalFormat("#0.00"));
+		// domains.add(new CoefficientDomain(2.5, 7.0, 0.3, new DecimalFormat("##0.0")));
+		// domains.add(new CoefficientDomain(9.0, 19.0, 0.3, new DecimalFormat("##0.0")));
+		// domains.add(new CoefficientDomain(11.0, 25.0, 0.3, new DecimalFormat("#0.00")));
 
 		for (CoefficientDomain domain : domains) {
 			combinations = getCombinations(domain, combinations);
@@ -35,7 +38,7 @@ public class App {
 		ArrayList<CultivarRun> cultivars = writeCultivars(combinations);
 
 		writeFileX(cultivars);
-
+		
 		writeBatch(cultivars);
 
 		writeBats(cultivars);
@@ -46,10 +49,12 @@ public class App {
 	private static void writeMasterBat(ArrayList<CultivarRun> cultivars) {
 		PrintWriter writer;
 		try {
-			File master = new File("dssat_runner\\master" + ".bat");
+			File master = new File("master" + ".bat");
 			writer = new PrintWriter(master);
 			for (CultivarRun cultivar : cultivars) {
-				writer.println(cultivar.getBat().getAbsolutePath());
+				writer.println("cd \"" + cultivar.getBat().getParent() + "\"");
+				writer.println(cultivar.getBat().getName());
+				writer.println("pause");
 			}
 			writer.println("@echo off");
 			writer.println("pause");
@@ -67,7 +72,9 @@ public class App {
 		for (CultivarRun cultivar : cultivars) {
 			PrintWriter writer;
 			try {
-				File bat = new File("BATS\\DSSBatch_drybean" + cultivar.getName() + ".bat");
+				File batDir = new File(cultivarDir + "\\" + cultivar.getName());
+				batDir.mkdirs();
+				File bat = new File(batDir.getAbsolutePath() + "\\" + cultivar.getName() + ".bat");
 				cultivar.setBat(bat);
 				writer = new PrintWriter(bat);
 				writer.println("C:\\DSSAT46\\dscsm046 CRGRO046 B " + cultivar.getBatch().getAbsolutePath());
@@ -75,6 +82,7 @@ public class App {
 				writer.println("exit");
 				writer.flush();
 				writer.close();
+
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
@@ -87,7 +95,9 @@ public class App {
 		for (CultivarRun cultivar : cultivars) {
 			PrintWriter writer;
 			try {
-				File batch = new File("BATCHS\\DSSBatch_drybean" + cultivar.getName() + ".v46");
+				File dir = new File(cultivarDir + "\\" + cultivar.getName());
+				dir.mkdirs();
+				File batch = new File(dir.getAbsolutePath() + "\\batch" + cultivar.getName() + ".v46");
 				cultivar.setBatch(batch);
 				writer = new PrintWriter(batch);
 				writer.println("$BATCH(DRYBEAN)");
@@ -106,7 +116,27 @@ public class App {
 	private static void writeFileX(ArrayList<CultivarRun> cultivars) {
 
 		for (CultivarRun cultivar : cultivars) {
-			File mergedFile = new File("EXPERIMENTS\\CCLA1303_" + cultivar + ".BNX");
+
+			File dir = new File(cultivarDir + "\\" + cultivar.getName());
+			dir.mkdirs();
+
+			File sourceA = new File("sample\\CCLA1302.BNA");
+			File targetA = new File(dir.getAbsolutePath() + "\\" + cultivar.getName() + ".BNA");
+			try {
+				Files.copy(sourceA.toPath(), targetA.toPath(), StandardCopyOption.REPLACE_EXISTING);
+			} catch (IOException e2) {
+				e2.printStackTrace();
+			}
+
+			File sourceT = new File("sample\\CCLA1302.BNT");
+			File targetT = new File(dir.getAbsolutePath() + "\\" + cultivar.getName() + ".BNT");
+			try {
+				Files.copy(sourceT.toPath(), targetT.toPath(), StandardCopyOption.REPLACE_EXISTING);
+			} catch (IOException e2) {
+				e2.printStackTrace();
+			}
+
+			File mergedFile = new File(dir.getAbsolutePath() + "\\" + cultivar.getName() + ".BNX");
 			cultivar.setFileX(mergedFile);
 			File head = new File("sample\\CCLA1303_head.BNX");
 			File tail = new File("sample\\CCLA1303_tail.BNX");
@@ -133,8 +163,8 @@ public class App {
 
 				inHead.close();
 
-				out.println(" 1 BN " + cultivar + " CALIMA");
-
+				out.println(" 1 BN " + cultivar.getName() + " CALIMA");
+				
 				FileInputStream fisTail;
 
 				fisTail = new FileInputStream(tail);
