@@ -1,0 +1,16 @@
+*EXP.DETAILS: CCLA1302BN 2D0 CICLO-06 SEPTIEMBRE-2013
+
+*GENERAL
+@PEOPLE
+Patricia Alvarez Toro
+@ADDRESS
+Centro Internacional de Agricultura Tropical, CIAT.
+@SITE
+Ensayo experimental, Vereda la Laja, Villanueva Santander.
+
+*TREATMENTS                        -------------FACTOR LEVELS------------
+@N R O C TNAME.................... CU FL SA IC MP MI MF MR MC MT ME MH SM
+ 1 1 1 0 SIM-CALIMA-PROTEGIDO       1  1  0  0  1  1  1  0  0  0  0  1  1
+
+*CULTIVARS
+@C CR INGENO CNAME
