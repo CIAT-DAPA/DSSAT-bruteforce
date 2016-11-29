@@ -9,7 +9,7 @@ public class CoefficientDomain {
 	private double period;
 	private DecimalFormat numberFormat;
 	private String stringFormat;
-
+	
 	public CoefficientDomain(double minValue, double maxValue, double period) {
 		super();
 		this.minValue = minValue;

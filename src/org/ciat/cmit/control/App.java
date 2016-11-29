@@ -12,12 +12,12 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.ciat.cmit.model.CoefficientDomain;
 import org.ciat.cmit.model.CultivarRun;
 
 public class App {
-	public static String cultivarDir = "W";
 
 	public static void main(String[] args) {
 		ArrayList<String> combinations = new ArrayList<String>();
@@ -25,9 +25,9 @@ public class App {
 		/* palvarez test cases */
 		ArrayList<CoefficientDomain> domains = new ArrayList<CoefficientDomain>();
 		domains.add(new CoefficientDomain(17.0, 20.0, 0.15, new DecimalFormat("#0.00")));
-		// domains.add(new CoefficientDomain(2.5, 7.0, 0.3, new DecimalFormat("##0.0")));
-		// domains.add(new CoefficientDomain(9.0, 19.0, 0.3, new DecimalFormat("##0.0")));
-		// domains.add(new CoefficientDomain(11.0, 25.0, 0.3, new DecimalFormat("#0.00")));
+		domains.add(new CoefficientDomain(2.5, 7.0, 0.3, new DecimalFormat("##0.0")));
+		domains.add(new CoefficientDomain(9.0, 19.0, 0.3, new DecimalFormat("##0.0")));
+		domains.add(new CoefficientDomain(11.0, 25.0, 0.3, new DecimalFormat("#0.00")));
 
 		for (CoefficientDomain domain : domains) {
 			combinations = getCombinations(domain, combinations);
@@ -36,16 +36,66 @@ public class App {
 		combinations = addPrefixAndSufix(combinations);
 
 		ArrayList<CultivarRun> cultivars = writeCultivars(combinations);
-
-		writeFileX(cultivars);
 		
+		writeFileX(cultivars);
+
 		writeBatch(cultivars);
 
 		writeBats(cultivars);
 
 		writeMasterBat(cultivars);
+		
+		writeMasterBatPerFolder(cultivars);
 	}
 
+	/**
+	 * This method creates different .bat files to make the process per each 100000 dummy cultivars
+	 * @param cultivars
+	 */
+	private static void writeMasterBatPerFolder(ArrayList<CultivarRun> cultivars) {
+
+		try {
+			// defining the files, in this case  5, the key will be as the names of the files that contains the executables
+			HashMap<String,File> masters = new HashMap<String,File>();
+			masters.put(getCultivarDir(000000),new File("master_"+getCultivarDir(000000) + ".bat"));
+			masters.put(getCultivarDir(000000),new File("master_"+getCultivarDir(100000) + ".bat"));
+			masters.put(getCultivarDir(000000),new File("master_"+getCultivarDir(200000) + ".bat"));
+			masters.put(getCultivarDir(000000),new File("master_"+getCultivarDir(300000) + ".bat"));
+			masters.put(getCultivarDir(000000),new File("master_"+getCultivarDir(400000) + ".bat"));
+			masters.put(getCultivarDir(000000),new File("master_"+getCultivarDir(500000) + ".bat"));
+			
+			// Creating the writers to each file
+			HashMap<String,PrintWriter> writers = new HashMap<String,PrintWriter>();
+			for (String key : masters.keySet()) {
+				writers.put(key,new PrintWriter(masters.get(key))  );
+			}
+			
+			// writers.get(tempKey) to get the respect writer to put the call in
+			String tempKey="";
+			for (CultivarRun cultivar : cultivars) {
+				tempKey= getCultivarDir(cultivar.getIndex());
+				writers.get(tempKey).println("cd \"" + cultivar.getBat().getParent() + "\"");
+				writers.get(tempKey).println("call \"cmd /c " + cultivar.getBat().getName() + "\"");
+				//writers.get(tempKey).flush();
+			
+			}
+			
+			// writing final instructions and closing the writers
+			for (String key : writers.keySet()) {
+				writers.get(key).println("@echo off");
+				writers.get(key).println("pause");
+				writers.get(key).println("exit");
+				writers.get(key).flush();
+				writers.get(key).close();
+			}
+
+
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+
+	}
+	
 	private static void writeMasterBat(ArrayList<CultivarRun> cultivars) {
 		PrintWriter writer;
 		try {
@@ -53,8 +103,8 @@ public class App {
 			writer = new PrintWriter(master);
 			for (CultivarRun cultivar : cultivars) {
 				writer.println("cd \"" + cultivar.getBat().getParent() + "\"");
-				writer.println(cultivar.getBat().getName());
-				writer.println("pause");
+				writer.println("call \"cmd /c " + cultivar.getBat().getName() + "\"");
+				// writer.println("pause");
 			}
 			writer.println("@echo off");
 			writer.println("pause");
@@ -72,7 +122,7 @@ public class App {
 		for (CultivarRun cultivar : cultivars) {
 			PrintWriter writer;
 			try {
-				File batDir = new File(cultivarDir + "\\" + cultivar.getName());
+				File batDir = new File(getCultivarDir(cultivar.getIndex()) + "\\" + cultivar.getName());
 				batDir.mkdirs();
 				File bat = new File(batDir.getAbsolutePath() + "\\" + cultivar.getName() + ".bat");
 				cultivar.setBat(bat);
@@ -89,13 +139,41 @@ public class App {
 		}
 	}
 
+	private static String getCultivarDir(int index) {
+		switch ((int)(index / 100000))  {
+		case 0:
+			return "I";
+		case 1:
+			return "J";
+		case 2:
+			return "L";
+		case 3:
+			return "M";
+		case 4:
+			return "N";
+		case 5:
+			return "O";
+		case 6:
+			return "P";
+		case 7:
+			return "Q";
+		case 8:
+			return "R";
+		case 9:
+			return "S";
+		default:
+			return "Z";
+
+		}
+	}
+
 	private static void writeBatch(ArrayList<CultivarRun> cultivars) {
 
 		String temp = "";
 		for (CultivarRun cultivar : cultivars) {
 			PrintWriter writer;
 			try {
-				File dir = new File(cultivarDir + "\\" + cultivar.getName());
+				File dir = new File(getCultivarDir(cultivar.getIndex()) + "\\" + cultivar.getName());
 				dir.mkdirs();
 				File batch = new File(dir.getAbsolutePath() + "\\batch" + cultivar.getName() + ".v46");
 				cultivar.setBatch(batch);
@@ -117,7 +195,7 @@ public class App {
 
 		for (CultivarRun cultivar : cultivars) {
 
-			File dir = new File(cultivarDir + "\\" + cultivar.getName());
+			File dir = new File(getCultivarDir(cultivar.getIndex()) + "\\" + cultivar.getName());
 			dir.mkdirs();
 
 			File sourceA = new File("sample\\CCLA1302.BNA");
@@ -164,7 +242,7 @@ public class App {
 				inHead.close();
 
 				out.println(" 1 BN " + cultivar.getName() + " CALIMA");
-				
+
 				FileInputStream fisTail;
 
 				fisTail = new FileInputStream(tail);
@@ -176,6 +254,7 @@ public class App {
 				}
 
 				inTail.close();
+				out.flush();
 				out.close();
 
 			} catch (IOException e) {
@@ -197,9 +276,10 @@ public class App {
 			writer.println("@VAR#  VRNAME.......... EXPNO   ECO#  CSDL PPSEN EM-FL FL-SH FL-SD SD-PM FL-LF LFMAX SLAVR SIZLF  XFRT WTPSD SFDUR SDPDV PODUR THRSH SDPRO SDLIP");
 			writer.println("!                                        1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17    18");
 			for (String combination : combinations) {
-				cultivars.add(new CultivarRun(nf.format(i++) + ""));
+				cultivars.add(new CultivarRun(nf.format(i++) + "", i));
 				writer.println(combination);
 			}
+			writer.flush();
 			writer.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -207,7 +287,6 @@ public class App {
 		return cultivars;
 	}
 
-	@Deprecated
 	private static ArrayList<String> addPrefixAndSufix(ArrayList<String> combinations) {
 		String temp;
 		ArrayList<String> newCombinations = new ArrayList<String>();
