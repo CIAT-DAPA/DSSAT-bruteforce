@@ -19,17 +19,14 @@ import org.ciat.cmit.model.CultivarRun;
 
 public class ModelRunGenerator {
 
-
-
-
 	CropModelRun run;
-	
+
 	public ModelRunGenerator(CropModelRun run) {
 		super();
 		this.run = run;
 	}
-	
-	public void work(){
+
+	public void work() {
 		run.getCombinations();
 
 		writeCultivars();
@@ -43,10 +40,8 @@ public class ModelRunGenerator {
 		writeMasterBat();
 
 		writeMasterBatPerFolder();
-		
-	}
-	
 
+	}
 
 	/**
 	 * This method creates different .bat files to make the process per each "run.getMaxFiles()" dummy cultivars
@@ -54,22 +49,15 @@ public class ModelRunGenerator {
 	 * @param cultivars
 	 */
 	public void writeMasterBatPerFolder() {
-		
 
 		try {
 			/*
-			 * defining the files, in this case 5, the key will be as the names of the files that contains the
-			 * executables
-			 * TODO make it in a loop
+			 * defining the main output files, the key will be as the names of the folders that contains the files
 			 */
 			HashMap<String, File> masters = new HashMap<String, File>();
-			masters.put(getCultivarDir(0), new File("master_" + getCultivarDir(0) + ".bat"));
-			masters.put(getCultivarDir(run.getMaxFiles()*1), new File("master_" + getCultivarDir(run.getMaxFiles()*1) + ".bat"));
-			masters.put(getCultivarDir(run.getMaxFiles()*2), new File("master_" + getCultivarDir(run.getMaxFiles()*2) + ".bat"));
-			masters.put(getCultivarDir(run.getMaxFiles()*3), new File("master_" + getCultivarDir(run.getMaxFiles()*3) + ".bat"));
-			masters.put(getCultivarDir(run.getMaxFiles()*4), new File("master_" + getCultivarDir(run.getMaxFiles()*4) + ".bat"));
-			masters.put(getCultivarDir(run.getMaxFiles()*5), new File("master_" + getCultivarDir(run.getMaxFiles()*5) + ".bat"));
-			masters.put(getCultivarDir(run.getMaxFiles()*6), new File("master_" + getCultivarDir(run.getMaxFiles()*6) + ".bat"));
+			for (int i = 0; i * run.getMaxFiles() < masters.size(); i++) {
+				masters.put(getCultivarDir(run.getMaxFiles() * i), new File("master_" + getCultivarDir(run.getMaxFiles() * i) + ".bat"));
+			}
 
 			/* Creating the writers to each file */
 			HashMap<String, PrintWriter> writers = new HashMap<String, PrintWriter>();
@@ -199,45 +187,45 @@ public class ModelRunGenerator {
 			/* generating file X */
 			File mergedFile = new File(dir.getAbsolutePath() + "\\" + cultivar.getName() + ".BNX");
 			cultivar.setFileX(mergedFile);
-			
+
 			FileWriter fstream = null;
-			PrintWriter out = null;
+			PrintWriter writer = null;
 			try {
 				fstream = new FileWriter(mergedFile, true);
-				out = new PrintWriter(fstream);
+				writer = new PrintWriter(fstream);
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
 
 			try {
 				/* Adding FileX head */
-				FileInputStream fisHead;
-				fisHead = new FileInputStream(run.getModel().getFileXHead());
-				BufferedReader inHead = new BufferedReader(new InputStreamReader(fisHead));
+				FileInputStream headReader;
+				headReader = new FileInputStream(run.getModel().getFileXHead());
+				BufferedReader inHead = new BufferedReader(new InputStreamReader(headReader));
 
 				String aLineHead;
 				while ((aLineHead = inHead.readLine()) != null) {
-					out.println(aLineHead);
+					writer.println(aLineHead);
 
 				}
 				inHead.close();
 
 				/* Inserting line that calls the specific cultivar */
-				out.println(" 1 BN " + cultivar.getName() + " CALIMA");
-				
+				writer.println(" 1 BN " + cultivar.getName() + " CALIMA");
+
 				/* Adding FileX tail */
-				FileInputStream fisTail;
-				fisTail = new FileInputStream(run.getModel().getFileXTail());
-				BufferedReader inTail = new BufferedReader(new InputStreamReader(fisTail));
+				FileInputStream tailReader;
+				tailReader = new FileInputStream(run.getModel().getFileXTail());
+				BufferedReader inTail = new BufferedReader(new InputStreamReader(tailReader));
 
 				String aLineTail;
 				while ((aLineTail = inTail.readLine()) != null) {
-					out.println(aLineTail);
+					writer.println(aLineTail);
 				}
 
 				inTail.close();
-				out.flush();
-				out.close();
+				writer.flush();
+				writer.close();
 
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -252,10 +240,24 @@ public class ModelRunGenerator {
 		PrintWriter writer;
 		DecimalFormat nf = new DecimalFormat("000000");
 		try {
-			writer = new PrintWriter("BNGRO046.CUL");
-			writer.println("*DRYBEAN GENOTYPE COEFFICIENTS: CRGRO046 MODEL");
-			writer.println("@VAR#  VRNAME.......... EXPNO   ECO#  CSDL PPSEN EM-FL FL-SH FL-SD SD-PM FL-LF LFMAX SLAVR SIZLF  XFRT WTPSD SFDUR SDPDV PODUR THRSH SDPRO SDLIP");
-			writer.println("!                                        1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17    18");
+			writer = new PrintWriter(run.getModel().getName()+".CUL");
+			
+			
+			FileInputStream headReader;
+			headReader = new FileInputStream(run.getModel().getFileCULHead());
+			BufferedReader inHead = new BufferedReader(new InputStreamReader(headReader));
+
+			String aLineHead;
+			while ((aLineHead = inHead.readLine()) != null) {
+				writer.println(aLineHead);
+
+			}
+			inHead.close();
+			
+			// writer.println("*DRYBEAN GENOTYPE COEFFICIENTS: CRGRO046 MODEL");
+			// writer.println("@VAR#  VRNAME.......... EXPNO   ECO#  CSDL PPSEN EM-FL FL-SH FL-SD SD-PM FL-LF LFMAX SLAVR SIZLF  XFRT WTPSD SFDUR SDPDV PODUR THRSH SDPRO SDLIP");
+			// writer.println("!                                        1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17    18");
+						
 			for (String combination : run.getCombinations()) {
 				run.getCultivars().add(new CultivarRun(nf.format(i++) + "", i));
 				writer.println(combination);
@@ -264,8 +266,10 @@ public class ModelRunGenerator {
 			writer.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-		
+
 	}
 
 	public ArrayList<String> getCombinationsToPrint(ArrayList<String> combinations) {
@@ -280,8 +284,5 @@ public class ModelRunGenerator {
 		return newCombinations;
 
 	}
-
-
-
 
 }

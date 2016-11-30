@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import org.ciat.cmit.model.CoefficientDomain;
 import org.ciat.cmit.model.CropModel;
 import org.ciat.cmit.model.CropModelRun;
-import org.ciat.cmit.model.CultivarRun;
 
 public class App {
 
@@ -21,7 +20,7 @@ public class App {
 		domains.add(new CoefficientDomain(9.0, 19.0, 0.3, new DecimalFormat("##0.0")));
 		domains.add(new CoefficientDomain(11.0, 25.0, 0.3, new DecimalFormat("#0.00")));
 
-		CropModel beanModel = new CropModel("CRGRO046", new File("sample\\CCLA1302.BNA"), new File("sample\\CCLA1302.BNT"), new File("sample\\CCLA1303_head.BNX"), new File("sample\\CCLA1303_tail.BNX"), new File(""));
+		CropModel beanModel = new CropModel("CRGRO046", new File("sample\\CCLA1302.BNA"), new File("sample\\CCLA1302.BNT"), new File("sample\\CCLA1303_head.BNX"), new File("sample\\CCLA1303_tail.BNX"), new File("BNGRO046_head.CUL"));
 
 		ModelRunGenerator mrg = new ModelRunGenerator(new CropModelRun(domains, beanModel, 100000));
 
