@@ -9,6 +9,7 @@ public class CultivarRun {
 	private File batch;
 	private File bat;
 	private int index;
+	
 
 	public CultivarRun(String name, int index) {
 		super();
@@ -54,6 +55,11 @@ public class CultivarRun {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	@Override
+	public String toString() {
+		return name;
 	}
 
 }

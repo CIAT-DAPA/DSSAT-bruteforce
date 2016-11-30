@@ -1,10 +1,13 @@
 package org.ciat.cmit.control;
 
 
+import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import org.ciat.cmit.model.CoefficientDomain;
+import org.ciat.cmit.model.CropModel;
+import org.ciat.cmit.model.CropModelRun;
 import org.ciat.cmit.model.CultivarRun;
 
 public class App {
@@ -20,24 +23,23 @@ public class App {
 		domains.add(new CoefficientDomain(11.0, 25.0, 0.3, new DecimalFormat("#0.00")));
 		
 		
-
-		for (CoefficientDomain domain : domains) {
-			combinations = RunningFilesGenerator.getCombinations(domain, combinations);
-		}
-
-		combinations = RunningFilesGenerator.addPrefixAndSufix(combinations);
-
-		ArrayList<CultivarRun> cultivars = RunningFilesGenerator.writeCultivars(combinations);
+		CropModel beanModel = new CropModel("CRGRO046",new File(""),new File(""),new File(""),new File(""), new File(""));
 		
-		RunningFilesGenerator.writeFileX(cultivars);
+		ModelRunGenerator mrg=new ModelRunGenerator(new CropModelRun(domains, beanModel, 100000));
+		
+		combinations = mrg.getCombinationsToPrint(combinations);
 
-		RunningFilesGenerator.writeBatch(cultivars);
+		ArrayList<CultivarRun> cultivars = mrg.writeCultivars(combinations);
+		
+		mrg.writeFileX(cultivars);
 
-		RunningFilesGenerator.writeBats(cultivars);
+		mrg.writeBatch(cultivars);
+
+		mrg.writeBats(cultivars);
 
 		// RunningFilesGenerator.writeMasterBat(cultivars);
 		
-		RunningFilesGenerator.writeMasterBatPerFolder(cultivars);
+		mrg.writeMasterBatPerFolder(cultivars);
 	}
 
 }
