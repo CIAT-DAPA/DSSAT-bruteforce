@@ -40,22 +40,14 @@ public class RunningFilesGenerator {
 			/* Creating the writers to each file*/
 			HashMap<String,PrintWriter> writers = new HashMap<String,PrintWriter>();
 			for (String key : masters.keySet()) {
-				System.out.println(key);
 				writers.put(key,new PrintWriter(masters.get(key))  );
-				System.out.println(key+" "+ masters.get(key).getAbsolutePath());
 			}
 			
 			/* writers.get(tempKey) to get the respect writer to put the call in */
 			String tempKey="";
 			for (CultivarRun cultivar : cultivars) {
 				tempKey= getCultivarDir(cultivar.getIndex());
-		
-				System.out.println(cultivar.getName());
-				System.out.println(cultivar.getBat().getAbsolutePath());
-				System.out.println();
-				System.out.println(tempKey);
 				writers.get(tempKey).println("cd \"" + cultivar.getBat().getParent() + "\"");
-					
 				writers.get(tempKey).println("call \"cmd /c " + cultivar.getBat().getName() + "\"");
 				writers.get(tempKey).flush();
 			
@@ -121,7 +113,7 @@ public class RunningFilesGenerator {
 	}
 
 	public static String getCultivarDir(int index) {
-		switch   (Character.getNumericValue(((new DecimalFormat("000000")).format(index)+"").charAt(0)))  {
+		switch   (index/100000)  { 
 		case 0:
 			return "I";
 		case 1:
