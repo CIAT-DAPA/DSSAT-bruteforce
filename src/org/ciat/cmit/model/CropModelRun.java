@@ -14,7 +14,15 @@ public class CropModelRun {
 		super();
 		this.domains = domains;
 		this.model = model;
-		this.maxFiles = maxFiles>100000?100000:maxFiles; // set maxFiles no bigger than 100000
+		
+		if (maxFiles < 0 || maxFiles > 100000) { // set maxFiles no less than zero and no bigger than 100000
+			this.maxFiles = 100000;
+		} else {
+			this.maxFiles = maxFiles;
+		}
+
+		this.cultivars = new ArrayList<>();
+		this.combinations = new ArrayList<>();
 	}
 
 	public ArrayList<CoefficientDomain> getDomains() {
@@ -34,19 +42,19 @@ public class CropModelRun {
 	}
 
 	public ArrayList<String> getCombinations() {
-		if (combinations.size() == 0)
+		if (combinations == null || combinations.size() == 0)
 			for (CoefficientDomain domain : domains) {
 				combinations = addCombination(domain, combinations);
 			}
 
 		return combinations;
 	}
-	
+
 	private ArrayList<String> addCombination(CoefficientDomain c, ArrayList<String> combinations) {
 		String temp;
 		ArrayList<String> newCombinations = new ArrayList<String>();
 
-		if (combinations.size() == 0) {
+		if (combinations == null || combinations.size() == 0) {
 			for (double j = c.getMinValue(); j <= c.getMaxValue(); j += c.getPeriod()) { /* for the first coefficient */
 				temp = String.format(c.getStringFormat(), c.getNumberFormat().format(j) + "");
 				newCombinations.add(temp);
@@ -63,7 +71,6 @@ public class CropModelRun {
 		}
 		return newCombinations;
 	}
-
 
 	public void setCombinations(ArrayList<String> combinations) {
 		this.combinations = combinations;

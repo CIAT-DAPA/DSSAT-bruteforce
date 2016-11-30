@@ -55,7 +55,7 @@ public class ModelRunGenerator {
 			 * defining the main output files, the key will be as the names of the folders that contains the files
 			 */
 			HashMap<String, File> masters = new HashMap<String, File>();
-			for (int i = 0; i * run.getMaxFiles() < masters.size(); i++) {
+			for (int i = 0; i * run.getMaxFiles() < run.getCultivars().size(); i++) {
 				masters.put(getCultivarDir(run.getMaxFiles() * i), new File("master_" + getCultivarDir(run.getMaxFiles() * i) + ".bat"));
 			}
 
@@ -240,7 +240,7 @@ public class ModelRunGenerator {
 		PrintWriter writer;
 		DecimalFormat nf = new DecimalFormat("000000");
 		try {
-			writer = new PrintWriter(run.getModel().getName()+".CUL");
+			writer = new PrintWriter("cultivars.CUL");
 			
 			
 			FileInputStream headReader;
@@ -254,11 +254,8 @@ public class ModelRunGenerator {
 			}
 			inHead.close();
 			
-			// writer.println("*DRYBEAN GENOTYPE COEFFICIENTS: CRGRO046 MODEL");
-			// writer.println("@VAR#  VRNAME.......... EXPNO   ECO#  CSDL PPSEN EM-FL FL-SH FL-SD SD-PM FL-LF LFMAX SLAVR SIZLF  XFRT WTPSD SFDUR SDPDV PODUR THRSH SDPRO SDLIP");
-			// writer.println("!                                        1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17    18");
 						
-			for (String combination : run.getCombinations()) {
+			for (String combination : getCombinationsToPrint()) {
 				run.getCultivars().add(new CultivarRun(nf.format(i++) + "", i));
 				writer.println(combination);
 			}
@@ -272,12 +269,12 @@ public class ModelRunGenerator {
 
 	}
 
-	public ArrayList<String> getCombinationsToPrint(ArrayList<String> combinations) {
+	public ArrayList<String> getCombinationsToPrint() {
 		String temp;
 		ArrayList<String> newCombinations = new ArrayList<String>();
 		DecimalFormat nf = new DecimalFormat("000000");
 		int i = 0;
-		for (String combination : combinations) {
+		for (String combination : run.getCombinations()) {
 			temp = nf.format(i++) + " CALIMA               . ANDIND 12.17 0.050 " + combination + " 18.00  0.98  320. 133.0  1.00 0.600  15.0  3.50  10.0  78.0  .235  .030";
 			newCombinations.add(temp);
 		}
