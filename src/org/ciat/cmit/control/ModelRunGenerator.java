@@ -20,14 +20,29 @@ import org.ciat.cmit.model.CultivarRun;
 public class ModelRunGenerator {
 
 
+
+
+	CropModelRun run;
+	
 	public ModelRunGenerator(CropModelRun run) {
 		super();
 		this.run = run;
 	}
-
-	CropModelRun run;
 	
 	public void work(){
+		run.getCombinations();
+
+		writeCultivars();
+
+		writeFileX();
+
+		writeBatch();
+
+		writeBats();
+
+		writeMasterBat();
+
+		writeMasterBatPerFolder();
 		
 	}
 	
@@ -38,7 +53,7 @@ public class ModelRunGenerator {
 	 * 
 	 * @param cultivars
 	 */
-	public void writeMasterBatPerFolder(ArrayList<CultivarRun> cultivars) {
+	public void writeMasterBatPerFolder() {
 		
 
 		try {
@@ -64,7 +79,7 @@ public class ModelRunGenerator {
 
 			/* writers.get(tempKey) to get the respect writer to put the call in */
 			String tempKey = "";
-			for (CultivarRun cultivar : cultivars) {
+			for (CultivarRun cultivar : run.getCultivars()) {
 				tempKey = getCultivarDir(cultivar.getIndex());
 				writers.get(tempKey).println("cd \"" + cultivar.getBat().getParent() + "\"");
 				writers.get(tempKey).println("call \"cmd /c " + cultivar.getBat().getName() + "\"");
@@ -87,12 +102,12 @@ public class ModelRunGenerator {
 
 	}
 
-	public void writeMasterBat(ArrayList<CultivarRun> cultivars) {
+	public void writeMasterBat() {
 		PrintWriter writer;
 		try {
 			File master = new File("master" + ".bat");
 			writer = new PrintWriter(master);
-			for (CultivarRun cultivar : cultivars) {
+			for (CultivarRun cultivar : run.getCultivars()) {
 				writer.println("cd \"" + cultivar.getBat().getParent() + "\"");
 				writer.println("call \"cmd /c " + cultivar.getBat().getName() + "\"");
 				writer.println("pause");
@@ -108,9 +123,9 @@ public class ModelRunGenerator {
 
 	}
 
-	public void writeBats(ArrayList<CultivarRun> cultivars) {
+	public void writeBats() {
 
-		for (CultivarRun cultivar : cultivars) {
+		for (CultivarRun cultivar : run.getCultivars()) {
 			PrintWriter writer;
 			File batDir = new File(getCultivarDir(cultivar.getIndex()) + "\\" + cultivar.getName());
 			batDir.mkdirs();
@@ -134,10 +149,10 @@ public class ModelRunGenerator {
 		return index / run.getMaxFiles() + "";
 	}
 
-	public void writeBatch(ArrayList<CultivarRun> cultivars) {
+	public void writeBatch() {
 
 		String temp = "";
-		for (CultivarRun cultivar : cultivars) {
+		for (CultivarRun cultivar : run.getCultivars()) {
 			PrintWriter writer;
 			File dir = new File(getCultivarDir(cultivar.getIndex()) + "\\" + cultivar.getName());
 			dir.mkdirs();
@@ -158,27 +173,25 @@ public class ModelRunGenerator {
 
 	}
 
-	public void writeFileX(ArrayList<CultivarRun> cultivars) {
+	public void writeFileX() {
 
-		for (CultivarRun cultivar : cultivars) {
+		for (CultivarRun cultivar : run.getCultivars()) {
 
 			File dir = new File(getCultivarDir(cultivar.getIndex()) + "\\" + cultivar.getName());
 			dir.mkdirs();
 
 			/* copying file A */
-			File sourceA = new File("sample\\CCLA1302.BNA");
 			File targetA = new File(dir.getAbsolutePath() + "\\" + cultivar.getName() + ".BNA");
 			try {
-				Files.copy(sourceA.toPath(), targetA.toPath(), StandardCopyOption.REPLACE_EXISTING);
+				Files.copy(run.getModel().getFileA().toPath(), targetA.toPath(), StandardCopyOption.REPLACE_EXISTING);
 			} catch (IOException e2) {
 				e2.printStackTrace();
 			}
 
 			/* copying file T */
-			File sourceT = new File("sample\\CCLA1302.BNT");
 			File targetT = new File(dir.getAbsolutePath() + "\\" + cultivar.getName() + ".BNT");
 			try {
-				Files.copy(sourceT.toPath(), targetT.toPath(), StandardCopyOption.REPLACE_EXISTING);
+				Files.copy(run.getModel().getFileT().toPath(), targetT.toPath(), StandardCopyOption.REPLACE_EXISTING);
 			} catch (IOException e2) {
 				e2.printStackTrace();
 			}
@@ -186,9 +199,7 @@ public class ModelRunGenerator {
 			/* generating file X */
 			File mergedFile = new File(dir.getAbsolutePath() + "\\" + cultivar.getName() + ".BNX");
 			cultivar.setFileX(mergedFile);
-			File head = new File("sample\\CCLA1303_head.BNX");
-			File tail = new File("sample\\CCLA1303_tail.BNX");
-
+			
 			FileWriter fstream = null;
 			PrintWriter out = null;
 			try {
@@ -198,9 +209,10 @@ public class ModelRunGenerator {
 				e1.printStackTrace();
 			}
 
-			FileInputStream fisHead;
 			try {
-				fisHead = new FileInputStream(head);
+				/* Adding FileX head */
+				FileInputStream fisHead;
+				fisHead = new FileInputStream(run.getModel().getFileXHead());
 				BufferedReader inHead = new BufferedReader(new InputStreamReader(fisHead));
 
 				String aLineHead;
@@ -208,14 +220,14 @@ public class ModelRunGenerator {
 					out.println(aLineHead);
 
 				}
-
 				inHead.close();
 
+				/* Inserting line that calls the specific cultivar */
 				out.println(" 1 BN " + cultivar.getName() + " CALIMA");
-
+				
+				/* Adding FileX tail */
 				FileInputStream fisTail;
-
-				fisTail = new FileInputStream(tail);
+				fisTail = new FileInputStream(run.getModel().getFileXTail());
 				BufferedReader inTail = new BufferedReader(new InputStreamReader(fisTail));
 
 				String aLineTail;
@@ -235,8 +247,7 @@ public class ModelRunGenerator {
 
 	}
 
-	public ArrayList<CultivarRun> writeCultivars(ArrayList<String> combinations) {
-		ArrayList<CultivarRun> cultivars = new ArrayList<>();
+	public void writeCultivars() {
 		int i = 0;
 		PrintWriter writer;
 		DecimalFormat nf = new DecimalFormat("000000");
@@ -245,8 +256,8 @@ public class ModelRunGenerator {
 			writer.println("*DRYBEAN GENOTYPE COEFFICIENTS: CRGRO046 MODEL");
 			writer.println("@VAR#  VRNAME.......... EXPNO   ECO#  CSDL PPSEN EM-FL FL-SH FL-SD SD-PM FL-LF LFMAX SLAVR SIZLF  XFRT WTPSD SFDUR SDPDV PODUR THRSH SDPRO SDLIP");
 			writer.println("!                                        1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17    18");
-			for (String combination : combinations) {
-				cultivars.add(new CultivarRun(nf.format(i++) + "", i));
+			for (String combination : run.getCombinations()) {
+				run.getCultivars().add(new CultivarRun(nf.format(i++) + "", i));
 				writer.println(combination);
 			}
 			writer.flush();
@@ -254,7 +265,7 @@ public class ModelRunGenerator {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-		return cultivars;
+		
 	}
 
 	public ArrayList<String> getCombinationsToPrint(ArrayList<String> combinations) {
