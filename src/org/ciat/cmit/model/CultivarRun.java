@@ -8,8 +8,7 @@ public class CultivarRun {
 	private File fileX;
 	private File batch;
 	private File bat;
-	private int index;
-	
+	private int index;	
 
 	public CultivarRun(String name, int index) {
 		super();
@@ -61,5 +60,6 @@ public class CultivarRun {
 	public String toString() {
 		return name;
 	}
+
 
 }

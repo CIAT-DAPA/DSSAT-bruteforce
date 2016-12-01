@@ -1,0 +1,73 @@
+
+*FIELDS
+@L ID_FIELD WSTA....  FLSA  FLOB  FLDT  FLDD  FLDS  FLST SLTX  SLDP  ID_SOIL    FLNAME
+ 1 -99      CCBR1502   -99   -99 DR000   -99   -99     0 SL      30  CCBuga0001 Calibracion
+ 2 -99      CCBC1502   -99   -99 DR000   -99   -99     0 SL      30  CCBuga0001 Calibracion
+ 3 -99      CCBB1502   -99   -99 DR000   -99   -99     0 SL      30  CCBuga0001 Calibracion
+ 4 -99      CCBA1502   -99   -99 DR000   -99   -99     0 SL      30  CCBuga0001 Calibracion
+@L ...........XCRD ...........YCRD .....ELEV .............AREA .SLEN .FLWR .SLAS FLHST FHDUR
+ 1          -76.29            3.83       979               -99   -99   -99   -99   -99   -99
+  
+*INITIAL CONDITIONS
+@C   PCR ICDAT  ICRT  ICND  ICRN  ICRE  ICWD ICRES ICREN ICREP ICRIP ICRID ICNAME
+ 1    MZ 15286   -99     0     1     1   -99     0     0     0   100    15 -99
+@C  ICBL  SH2O  SNH4  SNO3
+ 1    25   -99   4.2  11.9
+ 1    45   -99   4.4  12.4
+ 1    95   -99   4.5   7.6
+ 
+*PLANTING DETAILS
+@P PDATE EDATE  PPOP  PPOE  PLME  PLDS  PLRS  PLRD  PLDP  PLWT  PAGE  PENV  PLPH  SPRL                        PLNAME
+ 1 15286 15293  6.25  6.25     S     R    80    90     4   -99   -99   -99   -99   -99                        -99
+ 
+*IRRIGATION AND WATER MANAGEMENT
+@I  EFIR  IDEP  ITHR  IEPT  IOFF  IAME  IAMT IRNAME
+ 1     1    20    50   100 GS000 IR001    10 -99
+@I IDATE  IROP IRVAL
+ 1 15289 IR001 36.00
+ 1 15293 IR001 35.59
+ 1 15296 IR001 39.53
+ 1 15304 IR001 21.13
+ 1 15345 IR001 27.77
+ 1 15362 IR001 32.65
+ 1 16020 IR001 37.10 
+ 1 16036 IR001 41.47
+  
+*FERTILIZERS (INORGANIC)
+@F FDATE  FMCD  FACD  FDEP  FAMN  FAMP  FAMK  FAMC  FAMO  FOCD FERNAME
+ 1    21 FE006 AP002     4  33.3  29.1     0     0     0     0 -99
+ 1    21 FE016 AP002     4     0     0  36.0     0     0     0 -99
+ 1    35 FE005 AP002     4  63.9     0     0     0     0     0 -99
+ 1    35 FE016 AP002     4     0     0  39.2     0     0     0 -99
+ 1    58 FE005 AP002     4  63.9     0     0     0     0     0 -99
+
+*HARVEST DETAILS
+@H HDATE  HSTG  HCOM HSIZE   HPC  HBPC HNAME
+ 1 16055 GS000   -99   -99   -99   -99 -99
+ 
+*SIMULATION CONTROLS
+@N GENERAL     NYERS NREPS START SDATE RSEED SNAME.................... SMODEL
+ 1 GE              1     1     S 15286  2150 DEFAULT SIMULATION CONTR  MZCER
+@N OPTIONS     WATER NITRO SYMBI PHOSP POTAS DISES  CHEM  TILL   CO2
+ 1 OP              N     Y     N     N     N     N     N     N     M
+@N METHODS     WTHER INCON LIGHT EVAPO INFIL PHOTO HYDRO NSWIT MESOM MESEV MESOL
+ 1 ME              M     M     E     R     S     C     R     1     G     S     2
+@N MANAGEMENT  PLANT IRRIG FERTI RESID HARVS
+ 1 MA              R     R     D     R     R
+@N OUTPUTS     FNAME OVVEW SUMRY FROPT GROUT CAOUT WAOUT NIOUT MIOUT DIOUT VBOSE CHOUT OPOUT
+ 1 OU              N     Y     Y     1     Y     Y     Y     Y     Y     N     Y     N     Y
+
+@  AUTOMATIC MANAGEMENT
+@N PLANTING    PFRST PLAST PH2OL PH2OU PH2OD PSTMX PSTMN
+ 1 PL          15239 15249    50   100    30    40    10
+@N IRRIGATION  IMDEP ITHRL ITHRU IROFF IMETH IRAMT IREFF
+ 1 IR             30    50   100 GS000 IR001    10     1
+@N NITROGEN    NMDEP NMTHR NAMNT NCODE NAOFF
+ 1 NI              5    50    25 FE005 GS000
+@N RESIDUES    RIPCN RTIME RIDEP
+ 1 RE            100     1    20
+@N HARVEST     HFRST HLAST HPCNP HPCNR
+ 1 HA              0 01001   100     0
+
+
+

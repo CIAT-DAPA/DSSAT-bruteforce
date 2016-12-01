@@ -1,0 +1,18 @@
+*EXP.DETAILS: CALB1501MZ Calibracion Buga Valle 2015B
+
+*GENERAL
+@PEOPLE
+FENALCE CIAT
+@ADDRESS
+CIAT,A.A.6713,CALI,COLOMBIA
+@SITE
+CORDOBA,COLOMBIA
+@ PAREA  PRNO  PLEN  PLDR  PLSP  PLAY HAREA  HRNO  HLEN  HARM.........
+    -99   -99   -99   -99   -99   -99   -99   -99   -99   -99
+
+*TREATMENTS                        -------------FACTOR LEVELS------------
+@N R O C TNAME.................... CU FL SA IC MP MI MF MR MC MT ME MH SM
+ 1 1 0 0 P1                         1  1  0  1  1  1  1  0  0  0  0  1  1
+
+*CULTIVARS
+@C CR INGENO CNAME

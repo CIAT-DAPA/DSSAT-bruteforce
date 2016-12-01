@@ -9,12 +9,14 @@ public class CropModelRun {
 	private ArrayList<String> combinations;
 	private CropModel model;
 	private int maxFiles;
+	private String vrName;
+	private String eco;
 
-	public CropModelRun(ArrayList<CoefficientDomain> domains, CropModel model, int maxFiles) {
+	public CropModelRun(ArrayList<CoefficientDomain> domains, CropModel model, int maxFiles, String vrname, String eco) {
 		super();
 		this.domains = domains;
 		this.model = model;
-		
+
 		if (maxFiles < 0 || maxFiles > 100000) { // set maxFiles no less than zero and no bigger than 100000
 			this.maxFiles = 100000;
 		} else {
@@ -23,6 +25,8 @@ public class CropModelRun {
 
 		this.cultivars = new ArrayList<>();
 		this.combinations = new ArrayList<>();
+		this.setVrName(vrname);
+		this.setEco(eco);
 	}
 
 	public ArrayList<CoefficientDomain> getDomains() {
@@ -86,5 +90,21 @@ public class CropModelRun {
 
 	public int getMaxFiles() {
 		return maxFiles;
+	}
+
+	public String getVrName() {
+		return vrName;
+	}
+
+	public void setVrName(String vrname) {
+		this.vrName = vrname;
+	}
+
+	public String getEco() {
+		return eco;
+	}
+
+	public void setEco(String eco) {
+		this.eco = eco;
 	}
 }

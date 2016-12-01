@@ -31,15 +31,15 @@ public class ModelRunGenerator {
 
 		writeCultivars();
 
-		writeFileX();
+		//writeFileX();
 
-		writeBatch();
+		//writeBatch();
 
-		writeBats();
+		//writeBats();
 
-		writeMasterBat();
+		//writeMasterBat();
 
-		writeMasterBatPerFolder();
+		//writeMasterBatPerFolder();
 
 	}
 
@@ -211,7 +211,7 @@ public class ModelRunGenerator {
 				inHead.close();
 
 				/* Inserting line that calls the specific cultivar */
-				writer.println(" 1 BN " + cultivar.getName() + " CALIMA");
+				writer.println(" 1 " + run.getModel().getShortName() + " " + cultivar.getName() + " CALIMA");
 
 				/* Adding FileX tail */
 				FileInputStream tailReader;
@@ -241,8 +241,7 @@ public class ModelRunGenerator {
 		DecimalFormat nf = new DecimalFormat("000000");
 		try {
 			writer = new PrintWriter("cultivars.CUL");
-			
-			
+
 			FileInputStream headReader;
 			headReader = new FileInputStream(run.getModel().getFileCULHead());
 			BufferedReader inHead = new BufferedReader(new InputStreamReader(headReader));
@@ -253,8 +252,7 @@ public class ModelRunGenerator {
 
 			}
 			inHead.close();
-			
-						
+
 			for (String combination : getCombinationsToPrint()) {
 				run.getCultivars().add(new CultivarRun(nf.format(i++) + "", i));
 				writer.println(combination);
@@ -275,7 +273,7 @@ public class ModelRunGenerator {
 		DecimalFormat nf = new DecimalFormat("000000");
 		int i = 0;
 		for (String combination : run.getCombinations()) {
-			temp = nf.format(i++) + " CALIMA               . ANDIND 12.17 0.050 " + combination + " 18.00  0.98  320. 133.0  1.00 0.600  15.0  3.50  10.0  78.0  .235  .030";
+			temp = nf.format(i++) + " " + run.getVrName() + " " + run.getEco() + " " + combination + "";
 			newCombinations.add(temp);
 		}
 		return newCombinations;
