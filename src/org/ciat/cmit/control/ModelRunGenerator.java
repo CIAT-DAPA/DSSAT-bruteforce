@@ -31,15 +31,15 @@ public class ModelRunGenerator {
 
 		writeCultivars();
 
-		//writeFileX();
+		writeFileX();
 
-		//writeBatch();
+		writeBatch();
 
-		//writeBats();
+		writeBats();
 
-		//writeMasterBat();
+		writeMasterBat();
 
-		//writeMasterBatPerFolder();
+		writeMasterBatPerFolder();
 
 	}
 
