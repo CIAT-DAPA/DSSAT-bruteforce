@@ -98,7 +98,6 @@ public class ModelRunGenerator {
 			for (CultivarRun cultivar : run.getCultivars()) {
 				writer.println("cd \"" + cultivar.getBat().getParent() + "\"");
 				writer.println("call \"cmd /c " + cultivar.getBat().getName() + "\"");
-				writer.println("pause");
 			}
 			writer.println("@echo off");
 			writer.println("pause");
@@ -148,7 +147,7 @@ public class ModelRunGenerator {
 			try {
 				cultivar.setBatch(batch);
 				writer = new PrintWriter(batch);
-				writer.println("$BATCH(DRYBEAN)");
+				writer.println("$BATCH(CROP)");
 				writer.println("@FILEX                                                                                        TRTNO     RP     SQ     OP     CO");
 				temp = String.format("%1$-94s %2$4s %3$6s %4$6s %5$6s %6$6s", cultivar.getFileX().getAbsolutePath(), 1, 1, 0, 0, 0);
 				writer.println(temp);
@@ -211,7 +210,7 @@ public class ModelRunGenerator {
 				inHead.close();
 
 				/* Inserting line that calls the specific cultivar */
-				writer.println(" 1 " + run.getModel().getShortName() + " " + cultivar.getName() + " CALIMA");
+				writer.println(" 1 " + run.getModel().getShortName() + " " + cultivar.getName() + " DUMMY");
 
 				/* Adding FileX tail */
 				FileInputStream tailReader;
