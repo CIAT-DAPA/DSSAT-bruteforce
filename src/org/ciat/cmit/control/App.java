@@ -1,12 +1,6 @@
 package org.ciat.cmit.control;
 
 import java.io.File;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-
-import org.ciat.cmit.model.CoefficientDomain;
-import org.ciat.cmit.model.CropModel;
-import org.ciat.cmit.model.CropModelRun;
 
 public class App {
 
