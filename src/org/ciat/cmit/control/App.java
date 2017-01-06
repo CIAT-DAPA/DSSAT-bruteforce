@@ -12,9 +12,7 @@ public class App {
 		RunConfig rc = new RunConfig();
 
 		if (config.exists()) {
-
 			mgr = rc.getModelRunGenerator(config);
-			mgr.work();
 
 		} else {
 			mgr = rc.getModelRunGeneratorMaize();
