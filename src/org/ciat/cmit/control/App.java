@@ -12,10 +12,10 @@ public class App {
 		RunConfig rc = new RunConfig();
 
 		if (config.exists()) {
-			mgr = rc.getModelRunGenerator(config);
+			mgr = rc.getModelRunManager(config);
 
 		} else {
-			mgr = rc.getModelRunGeneratorMaize();
+			mgr = rc.getModelRunManagerMaize();
 		}
 		mgr.work();
 	}

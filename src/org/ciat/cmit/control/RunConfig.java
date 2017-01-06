@@ -12,7 +12,7 @@ import org.ciat.cmit.model.CropModelRun;
 
 public class RunConfig {
 
-	public ModelRunManager getModelRunGenerator(File config) {
+	public ModelRunManager getModelRunManager(File config) {
 		ArrayList<CoefficientDomain> domains = new ArrayList<CoefficientDomain>();
 		try {
 			Scanner reader = new Scanner(config);
@@ -43,11 +43,11 @@ public class RunConfig {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-		return getModelRunGeneratorBean();
+		return getModelRunManagerBean();
 
 	}
 
-	public ModelRunManager getModelRunGeneratorBean() {
+	public ModelRunManager getModelRunManagerBean() {
 		ArrayList<CoefficientDomain> domains = new ArrayList<CoefficientDomain>();
 		domains.add(new CoefficientDomain(12.17, 12.17, 100000, new DecimalFormat("#0.00"), "%1$5s"));
 		domains.add(new CoefficientDomain(0.050, 0.050, 100000, new DecimalFormat("0.000"), "%1$5s"));
@@ -75,7 +75,7 @@ public class RunConfig {
 		return mrg;
 	}
 
-	public ModelRunManager getModelRunGeneratorMaize() {
+	public ModelRunManager getModelRunManagerMaize() {
 		ArrayList<CoefficientDomain> domains = new ArrayList<CoefficientDomain>();
 		domains.add(new CoefficientDomain(220, 320, 4, new DecimalFormat("##0.0"), "%1$5s"));
 		domains.add(new CoefficientDomain(0.500, 0.500, 100000, new DecimalFormat("0.000"), "%1$5s"));
