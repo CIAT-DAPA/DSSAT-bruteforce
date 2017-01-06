@@ -7,7 +7,7 @@ public class App {
 	public static void main(String[] args) {
 
 
-		ModelRunGenerator mgr;
+		ModelRunManager mgr;
 		File config = new File("config.txt");
 		RunConfig rc = new RunConfig();
 

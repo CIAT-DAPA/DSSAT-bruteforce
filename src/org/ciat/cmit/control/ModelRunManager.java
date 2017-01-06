@@ -17,11 +17,11 @@ import java.util.HashMap;
 import org.ciat.cmit.model.CropModelRun;
 import org.ciat.cmit.model.CultivarRun;
 
-public class ModelRunGenerator {
+public class ModelRunManager {
 
 	CropModelRun run;
 
-	public ModelRunGenerator(CropModelRun run) {
+	public ModelRunManager(CropModelRun run) {
 		super();
 		this.run = run;
 	}

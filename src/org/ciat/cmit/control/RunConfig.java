@@ -12,7 +12,7 @@ import org.ciat.cmit.model.CropModelRun;
 
 public class RunConfig {
 
-	public ModelRunGenerator getModelRunGenerator(File config) {
+	public ModelRunManager getModelRunGenerator(File config) {
 		ArrayList<CoefficientDomain> domains = new ArrayList<CoefficientDomain>();
 		try {
 			Scanner reader = new Scanner(config);
@@ -35,7 +35,7 @@ public class RunConfig {
 			}
 			CropModel model = new CropModel(modelName, modelShortName, new File(fileA), new File(fileT), new File(fileXHead), new File(fileXTail), new File(culHead));
 			CropModelRun mr = new CropModelRun(domains, model,  Integer.parseInt(maxFiles), vrname , eco);
-			ModelRunGenerator mrg = new ModelRunGenerator(mr);
+			ModelRunManager mrg = new ModelRunManager(mr);
 
 			reader.close();
 
@@ -47,7 +47,7 @@ public class RunConfig {
 
 	}
 
-	public ModelRunGenerator getModelRunGeneratorBean() {
+	public ModelRunManager getModelRunGeneratorBean() {
 		ArrayList<CoefficientDomain> domains = new ArrayList<CoefficientDomain>();
 		domains.add(new CoefficientDomain(12.17, 12.17, 100000, new DecimalFormat("#0.00"), "%1$5s"));
 		domains.add(new CoefficientDomain(0.050, 0.050, 100000, new DecimalFormat("0.000"), "%1$5s"));
@@ -70,12 +70,12 @@ public class RunConfig {
 
 		CropModel model = new CropModel("CRGRO046", "BN", new File("sample\\CCLA1302.BNA"), new File("sample\\CCLA1302.BNT"), new File("sample\\CCLA1302_head.BNX"), new File("sample\\CCLA1302_tail.BNX"), new File("sample\\BNGRO046_head.CUL"));
 
-		ModelRunGenerator mrg = new ModelRunGenerator(new CropModelRun(domains, model, 100000, "CALIMA               .", "ANDIND"));
+		ModelRunManager mrg = new ModelRunManager(new CropModelRun(domains, model, 100000, "CALIMA               .", "ANDIND"));
 
 		return mrg;
 	}
 
-	public ModelRunGenerator getModelRunGeneratorMaize() {
+	public ModelRunManager getModelRunGeneratorMaize() {
 		ArrayList<CoefficientDomain> domains = new ArrayList<CoefficientDomain>();
 		domains.add(new CoefficientDomain(220, 320, 4, new DecimalFormat("##0.0"), "%1$5s"));
 		domains.add(new CoefficientDomain(0.500, 0.500, 100000, new DecimalFormat("0.000"), "%1$5s"));
@@ -86,7 +86,7 @@ public class RunConfig {
 
 		CropModel model = new CropModel("CALB1501MZ", "MZ", new File("sample\\CALB1502.MZA"), new File("sample\\CALB1502.MZT"), new File("sample\\CALB1502_head.MZX"), new File("sample\\CALB1502_tail.MZX"), new File("sample\\MZCER046_head.CUL"));
 
-		ModelRunGenerator mrg = new ModelRunGenerator(new CropModelRun(domains, model, 100000, "PIO 30F35HRB_        .", "IB0001"));
+		ModelRunManager mrg = new ModelRunManager(new CropModelRun(domains, model, 100000, "PIO 30F35HRB_        .", "IB0001"));
 
 		return mrg;
 	}
