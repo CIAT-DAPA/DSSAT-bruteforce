@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 import org.ciat.cmit.model.CoefficientDomain;
@@ -13,28 +14,28 @@ import org.ciat.cmit.model.CropModelRun;
 public class RunConfig {
 
 	public ModelRunManager getModelRunManager(File config) {
-		ArrayList<CoefficientDomain> domains = new ArrayList<CoefficientDomain>();
+		List<CoefficientDomain> domains = new ArrayList<CoefficientDomain>();
 		try {
 			Scanner reader = new Scanner(config);
 
 			String modelName = reader.nextLine();
 			String modelShortName = reader.nextLine();
-			String fileA=reader.nextLine();
-			String fileT=reader.nextLine();
-			String fileXHead=reader.nextLine();
-			String fileXTail=reader.nextLine();
-			String culHead=reader.nextLine();
-			String maxFiles=reader.nextLine();
-			String vrname=reader.nextLine();
-			String eco=reader.nextLine();
-			String domi="";
+			String fileA = reader.nextLine();
+			String fileT = reader.nextLine();
+			String fileXHead = reader.nextLine();
+			String fileXTail = reader.nextLine();
+			String culHead = reader.nextLine();
+			String maxFiles = reader.nextLine();
+			String vrname = reader.nextLine();
+			String eco = reader.nextLine();
+			String domi = "";
 			while (reader.hasNextLine()) {
-				domi=reader.nextLine();
-				String param[]=	domi.split(" ");
-				domains.add(new CoefficientDomain(Double.parseDouble(param[0]), Double.parseDouble(param[1]), Double.parseDouble(param[2]), new DecimalFormat(param[3]), "%1$"+param[4]+"s"));
+				domi = reader.nextLine();
+				String param[] = domi.split(" ");
+				domains.add(new CoefficientDomain(Double.parseDouble(param[0]), Double.parseDouble(param[1]), Double.parseDouble(param[2]), new DecimalFormat(param[3]), "%1$" + param[4] + "s"));
 			}
 			CropModel model = new CropModel(modelName, modelShortName, new File(fileA), new File(fileT), new File(fileXHead), new File(fileXTail), new File(culHead));
-			CropModelRun mr = new CropModelRun(domains, model,  Integer.parseInt(maxFiles), vrname , eco);
+			CropModelRun mr = new CropModelRun(domains, model, Integer.parseInt(maxFiles), vrname, eco, getTreatments(new File(fileXHead)));
 			ModelRunManager mrg = new ModelRunManager(mr);
 
 			reader.close();
@@ -47,7 +48,7 @@ public class RunConfig {
 
 	}
 
-	public ModelRunManager getModelRunManagerBean() {
+	protected ModelRunManager getModelRunManagerBean() {
 		ArrayList<CoefficientDomain> domains = new ArrayList<CoefficientDomain>();
 		domains.add(new CoefficientDomain(12.17, 12.17, 100000, new DecimalFormat("#0.00"), "%1$5s"));
 		domains.add(new CoefficientDomain(0.050, 0.050, 100000, new DecimalFormat("0.000"), "%1$5s"));
@@ -70,12 +71,12 @@ public class RunConfig {
 
 		CropModel model = new CropModel("CRGRO046", "BN", new File("sample\\CCLA1302.BNA"), new File("sample\\CCLA1302.BNT"), new File("sample\\CCLA1302_head.BNX"), new File("sample\\CCLA1302_tail.BNX"), new File("sample\\BNGRO046_head.CUL"));
 
-		ModelRunManager mrg = new ModelRunManager(new CropModelRun(domains, model, 100000, "CALIMA               .", "ANDIND"));
+		ModelRunManager mrg = new ModelRunManager(new CropModelRun(domains, model, 100000, "CALIMA               .", "ANDIND",getTreatments(new File("sample\\CCLA1302_head.BNX"))));
 
 		return mrg;
 	}
 
-	public ModelRunManager getModelRunManagerMaize() {
+	protected ModelRunManager getModelRunManagerMaize() {
 		ArrayList<CoefficientDomain> domains = new ArrayList<CoefficientDomain>();
 		domains.add(new CoefficientDomain(220, 320, 4, new DecimalFormat("##0.0"), "%1$5s"));
 		domains.add(new CoefficientDomain(0.500, 0.500, 100000, new DecimalFormat("0.000"), "%1$5s"));
@@ -86,8 +87,47 @@ public class RunConfig {
 
 		CropModel model = new CropModel("CALB1501MZ", "MZ", new File("sample\\CALB1502.MZA"), new File("sample\\CALB1502.MZT"), new File("sample\\CALB1502_head.MZX"), new File("sample\\CALB1502_tail.MZX"), new File("sample\\MZCER046_head.CUL"));
 
-		ModelRunManager mrg = new ModelRunManager(new CropModelRun(domains, model, 100000, "PIO 30F35HRB_        .", "IB0001"));
+		ModelRunManager mrg = new ModelRunManager(new CropModelRun(domains, model, 100000, "PIO 30F35HRB_        .", "IB0001",getTreatments(new File("sample\\CALB1502_head.MZX"))));
 
 		return mrg;
+	}
+
+	public enum readingStatus{look,read,stop};
+	
+	private List<Integer> getTreatments(File fileXHead) {
+		List<Integer> treatments = new ArrayList<Integer>();
+
+		Scanner reader;
+		String line="";
+		readingStatus flag = readingStatus.look;
+
+		if (fileXHead.exists()) {
+
+			try {
+				reader = new Scanner(fileXHead);
+				while (flag != readingStatus.stop && reader.hasNextLine() ) {
+					line = reader.nextLine();
+					if (line.contains("*TREATMENTS")) {
+						flag = readingStatus.read;
+					}
+					if (line.contains("*CULTIVARS")) {
+						flag = readingStatus.stop;
+					}
+					if(flag==readingStatus.read && !line.isEmpty() && !line.startsWith("@") && !line.startsWith("*")){
+						//TODO validate the treatment is from the cultivar ID=1
+						//TODO find a more elegant way to get the treatment ID 
+						treatments.add(Integer.parseInt(line.substring(0, 2).trim())); 
+					}
+				}
+				reader.close();
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+
+			
+		}else{
+			treatments.add(1);
+		}
+		return treatments;
 	}
 }

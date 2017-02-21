@@ -1,18 +1,20 @@
 package org.ciat.cmit.model;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class CropModelRun {
 
-	private ArrayList<CoefficientDomain> domains;
-	private ArrayList<CultivarRun> cultivars;
-	private ArrayList<String> combinations;
+	private List<CoefficientDomain> domains;
+	private List<CultivarRun> cultivars;
+	private List<String> combinations;
+	private List<Integer> cultivarTreatments;
 	private CropModel model;
 	private int maxFiles;
 	private String vrName;
 	private String eco;
 
-	public CropModelRun(ArrayList<CoefficientDomain> domains, CropModel model, int maxFiles, String vrname, String eco) {
+	public CropModelRun(List<CoefficientDomain> domains, CropModel model, int maxFiles, String vrname, String eco, List<Integer> cultivarTreatments) {
 		super();
 		this.domains = domains;
 		this.model = model;
@@ -27,9 +29,10 @@ public class CropModelRun {
 		this.combinations = new ArrayList<>();
 		this.setVrName(vrname);
 		this.setEco(eco);
+		this.setCultivarTreatments(cultivarTreatments);
 	}
 
-	public ArrayList<CoefficientDomain> getDomains() {
+	public List<CoefficientDomain> getDomains() {
 		return domains;
 	}
 
@@ -37,7 +40,7 @@ public class CropModelRun {
 		this.domains = domains;
 	}
 
-	public ArrayList<CultivarRun> getCultivars() {
+	public List<CultivarRun> getCultivars() {
 		return cultivars;
 	}
 
@@ -45,7 +48,7 @@ public class CropModelRun {
 		this.cultivars = cultivars;
 	}
 
-	public ArrayList<String> getCombinations() {
+	public List<String> getCombinations() {
 		if (combinations == null || combinations.size() == 0)
 			for (CoefficientDomain domain : domains) {
 				combinations = addCombination(domain, combinations);
@@ -54,7 +57,7 @@ public class CropModelRun {
 		return combinations;
 	}
 
-	private ArrayList<String> addCombination(CoefficientDomain c, ArrayList<String> combinations) {
+	private List<String> addCombination(CoefficientDomain c, List<String> combinations) {
 		String temp;
 		ArrayList<String> newCombinations = new ArrayList<String>();
 
@@ -76,7 +79,7 @@ public class CropModelRun {
 		return newCombinations;
 	}
 
-	public void setCombinations(ArrayList<String> combinations) {
+	public void setCombinations(List<String> combinations) {
 		this.combinations = combinations;
 	}
 
@@ -106,5 +109,13 @@ public class CropModelRun {
 
 	public void setEco(String eco) {
 		this.eco = eco;
+	}
+
+	public List<Integer> getCultivarTreatments() {
+		return cultivarTreatments;
+	}
+
+	public void setCultivarTreatments(List<Integer> cultivarTreatments) {
+		this.cultivarTreatments = cultivarTreatments;
 	}
 }

@@ -48,7 +48,7 @@ public class ModelRunManager {
 	 * 
 	 * @param cultivars
 	 */
-	public void writeMasterBatPerFolder() {
+	private void writeMasterBatPerFolder() {
 
 		try {
 			/*
@@ -90,7 +90,7 @@ public class ModelRunManager {
 
 	}
 
-	public void writeMasterBat() {
+	private void writeMasterBat() {
 		PrintWriter writer;
 		try {
 			File master = new File("master" + ".bat");
@@ -110,7 +110,7 @@ public class ModelRunManager {
 
 	}
 
-	public void writeBats() {
+	private void writeBats() {
 
 		for (CultivarRun cultivar : run.getCultivars()) {
 			PrintWriter writer;
@@ -136,7 +136,7 @@ public class ModelRunManager {
 		return index / run.getMaxFiles() + "";
 	}
 
-	public void writeBatch() {
+	private void writeBatch() {
 
 		String temp = "";
 		for (CultivarRun cultivar : run.getCultivars()) {
@@ -149,8 +149,10 @@ public class ModelRunManager {
 				writer = new PrintWriter(batch);
 				writer.println("$BATCH(CROP)");
 				writer.println("@FILEX                                                                                        TRTNO     RP     SQ     OP     CO");
-				temp = String.format("%1$-94s %2$4s %3$6s %4$6s %5$6s %6$6s", cultivar.getFileX().getAbsolutePath(), 1, 1, 0, 0, 0);
-				writer.println(temp);
+				for(Integer id: run.getCultivarTreatments()){
+					temp = String.format("%1$-94s %2$4s %3$6s %4$6s %5$6s %6$6s", cultivar.getFileX().getAbsolutePath(), id, 1, 0, 0, 0);
+					writer.println(temp);
+				}
 				writer.flush();
 				writer.close();
 			} catch (IOException e1) {
@@ -160,7 +162,7 @@ public class ModelRunManager {
 
 	}
 
-	public void writeFileX() {
+	private void writeFileX() {
 
 		for (CultivarRun cultivar : run.getCultivars()) {
 
@@ -234,7 +236,7 @@ public class ModelRunManager {
 
 	}
 
-	public void writeCultivars() {
+	private void writeCultivars() {
 		int i = 0;
 		PrintWriter writer;
 		DecimalFormat nf = new DecimalFormat("000000");
