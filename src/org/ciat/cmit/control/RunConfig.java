@@ -92,28 +92,28 @@ public class RunConfig {
 		return mrg;
 	}
 
-	public enum readingStatus{look,read,stop};
+	public enum readingStatus{LOOK,READ,STOP};
 	
 	private List<Integer> getTreatments(File fileXHead) {
 		List<Integer> treatments = new ArrayList<Integer>();
 
 		Scanner reader;
 		String line="";
-		readingStatus flag = readingStatus.look;
+		readingStatus flag = readingStatus.LOOK;
 
 		if (fileXHead.exists()) {
 
 			try {
 				reader = new Scanner(fileXHead);
-				while (flag != readingStatus.stop && reader.hasNextLine() ) {
+				while (flag != readingStatus.STOP && reader.hasNextLine() ) {
 					line = reader.nextLine();
 					if (line.contains("*TREATMENTS")) {
-						flag = readingStatus.read;
+						flag = readingStatus.READ;
 					}
 					if (line.contains("*CULTIVARS")) {
-						flag = readingStatus.stop;
+						flag = readingStatus.STOP;
 					}
-					if(flag==readingStatus.read && !line.isEmpty() && !line.startsWith("@") && !line.startsWith("*")){
+					if(flag==readingStatus.READ && !line.isEmpty() && !line.startsWith("@") && !line.startsWith("*")){
 						//TODO validate the treatment is from the cultivar ID=1
 						//TODO find a more elegant way to get the treatment ID 
 						treatments.add(Integer.parseInt(line.substring(0, 2).trim())); 

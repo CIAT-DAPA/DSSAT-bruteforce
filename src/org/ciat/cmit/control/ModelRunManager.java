@@ -27,7 +27,7 @@ public class ModelRunManager {
 	}
 
 	public void work() {
-		run.getCombinations();
+		run.obtainCombinations();
 
 		writeCultivars();
 
@@ -268,12 +268,12 @@ public class ModelRunManager {
 
 	}
 
-	public ArrayList<String> getCombinationsToPrint() {
+	private ArrayList<String> getCombinationsToPrint() {
 		String temp;
 		ArrayList<String> newCombinations = new ArrayList<String>();
 		DecimalFormat nf = new DecimalFormat("000000");
 		int i = 0;
-		for (String combination : run.getCombinations()) {
+		for (String combination : run.obtainCombinations()) {
 			temp = nf.format(i++) + " " + run.getVrName() + " " + run.getEco() + " " + combination + "";
 			newCombinations.add(temp);
 		}

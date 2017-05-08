@@ -48,7 +48,7 @@ public class CropModelRun {
 		this.cultivars = cultivars;
 	}
 
-	public List<String> getCombinations() {
+	public List<String> obtainCombinations() {
 		if (combinations == null || combinations.size() == 0)
 			for (CoefficientDomain domain : domains) {
 				combinations = addCombination(domain, combinations);
