@@ -1,2 +1,2 @@
-java -jar .\DSSAT-Multiparametizer.jar
+java -jar .\DSSAT-bruteforce.jar
 pause

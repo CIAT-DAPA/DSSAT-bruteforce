@@ -126,6 +126,11 @@ public class ModelRunManager {
 			try(PrintWriter writer = new PrintWriter(bat)) {
 				
 				writer.println("C:\\DSSAT46\\dscsm046 " + run.getModel().getName() + " B " + cultivar.getBatch().getAbsolutePath());
+				writer.println("rename PlantGro.OUT summary.txt");
+				writer.println("rename Overview.OUT overview.txt");
+				writer.println("del *.OUT");
+				writer.println("rename summary.txt PlantGro.OUT");
+				writer.println("rename overview.txt Overview.OUT");
 				writer.println("@echo off");
 				writer.println("exit");
 
@@ -139,6 +144,7 @@ public class ModelRunManager {
 				bar.update(subFolderIndex, subFoderTotal);
 			}
 		}
+		bar.update(subFoderTotal-1, subFoderTotal);
 	}
 
 	public String getCultivarDir(int index) {
@@ -178,7 +184,7 @@ public class ModelRunManager {
 				bar.update(subFolderIndex, subFoderTotal);
 			}
 		}
-
+		bar.update(subFoderTotal-1, subFoderTotal);
 	}
 
 	private void writeFileX() {
@@ -243,7 +249,7 @@ public class ModelRunManager {
 				bar.update(subFolderIndex, subFoderTotal);
 			}
 		}
-
+		bar.update(subFoderTotal-1, subFoderTotal);
 	}
 
 	private void writeCultivars() {
@@ -270,7 +276,7 @@ public class ModelRunManager {
 				
 				// progress bar update
 				/*subFolderIndex++;
-				if (subFolderIndex % 100 == 0) {
+				if (subFolderIndex % 10 == 0) {
 					bar.update(subFolderIndex, subFoderTotal);
 				}*/
 			}
@@ -280,7 +286,7 @@ public class ModelRunManager {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
+		System.out.println("100%");
 	}
 
 	private ArrayList<String> getCombinationsToPrint() {
