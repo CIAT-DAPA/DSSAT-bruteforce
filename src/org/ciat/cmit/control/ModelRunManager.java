@@ -8,8 +8,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -188,7 +186,7 @@ public class ModelRunManager {
 	}
 
 	private void writeFileX() {
-		System.out.println("Writing X files, copying T file, copying A file");
+		System.out.println("Writing X files");
 		ProgressBar bar = new ProgressBar();
 		int subFolderIndex = 0;
 		int subFoderTotal =  run.getCultivars().size();
@@ -199,21 +197,23 @@ public class ModelRunManager {
 			File dir = new File(getCultivarDir(cultivar.getIndex()) + "\\" + cultivar.getName());
 			dir.mkdirs();
 
+			/**this is not necessary anymore, the summary handle to get the measured values*/
 			/* copying file A */
-			File targetA = new File(dir.getAbsolutePath() + "\\" + cultivar.getName() + ".BNA");
+			/*File targetA = new File(dir.getAbsolutePath() + "\\" + cultivar.getName() + ".BNA");
 			try {
 				Files.copy(run.getModel().getFileA().toPath(), targetA.toPath(), StandardCopyOption.REPLACE_EXISTING);
 			} catch (IOException e2) {
 				e2.printStackTrace();
-			}
-
+			}*/
+			
+			/**this is not necessary anymore, the summary handle to get the measured values*/
 			/* copying file T */
-			File targetT = new File(dir.getAbsolutePath() + "\\" + cultivar.getName() + ".BNT");
+			/*File targetT = new File(dir.getAbsolutePath() + "\\" + cultivar.getName() + ".BNT");
 			try {
 				Files.copy(run.getModel().getFileT().toPath(), targetT.toPath(), StandardCopyOption.REPLACE_EXISTING);
 			} catch (IOException e2) {
 				e2.printStackTrace();
-			}
+			}*/
 
 			/* generating file X */
 			File mergedFile = new File(dir.getAbsolutePath() + "\\" + cultivar.getName() + ".BNX");
