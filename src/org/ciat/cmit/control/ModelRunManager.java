@@ -1,6 +1,7 @@
 package org.ciat.cmit.control;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -9,7 +10,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.ciat.cmit.model.CropModelRun;
@@ -18,7 +18,8 @@ import org.ciat.cmit.model.ProgressBar;
 
 public class ModelRunManager {
 
-	CropModelRun run;
+	private CropModelRun run;
+	private String[] namesOfVariables;
 
 	public ModelRunManager(CropModelRun run) {
 		super();
@@ -26,8 +27,6 @@ public class ModelRunManager {
 	}
 
 	public void work() {
-		run.obtainCombinations();
-
 		writeCultivars();
 
 		writeFileX();
@@ -43,12 +42,12 @@ public class ModelRunManager {
 	}
 
 	/**
-	 * This method creates different .bat files to make the process per each "run.getMaxFiles()" dummy cultivars
+	 * This method creates different .bat files to make the process per each "run.getMaxFiles()" candidate
 	 * 
 	 * @param cultivars
 	 */
 	private void writeMasterBatPerFolder() {
-		
+
 		try {
 			/*
 			 * defining the main output files, the key will be as the names of the folders that contains the files
@@ -90,10 +89,10 @@ public class ModelRunManager {
 	}
 
 	private void writeMasterBat() {
-		
+
 		File master = new File("master" + ".bat");
-		try(PrintWriter writer = new PrintWriter(master);) {
-			
+		try (PrintWriter writer = new PrintWriter(master);) {
+
 			for (CultivarRun cultivar : run.getCultivars()) {
 				writer.println("cd \"" + cultivar.getBat().getParent() + "\"");
 				writer.println("call \"cmd /c " + cultivar.getBat().getName() + "\"");
@@ -112,7 +111,7 @@ public class ModelRunManager {
 		System.out.println("Writing .bat files");
 		ProgressBar bar = new ProgressBar();
 		int subFolderIndex = 0;
-		int subFoderTotal =  run.getCultivars().size();
+		int subFoderTotal = run.getCultivars().size();
 		bar.update(0, subFoderTotal);
 
 		for (CultivarRun cultivar : run.getCultivars()) {
@@ -121,8 +120,8 @@ public class ModelRunManager {
 			batDir.mkdirs();
 			File bat = new File(batDir.getAbsolutePath() + "\\" + cultivar.getName() + ".bat");
 			cultivar.setBat(bat);
-			try(PrintWriter writer = new PrintWriter(bat)) {
-				
+			try (PrintWriter writer = new PrintWriter(bat)) {
+
 				writer.println("C:\\DSSAT46\\dscsm046 " + run.getModel().getName() + " B " + cultivar.getBatch().getAbsolutePath());
 				writer.println("rename PlantGro.OUT summary.txt");
 				writer.println("rename Overview.OUT overview.txt");
@@ -135,14 +134,14 @@ public class ModelRunManager {
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
-			
+
 			// progress bar update
 			subFolderIndex++;
 			if (subFolderIndex % 100 == 0) {
 				bar.update(subFolderIndex, subFoderTotal);
 			}
 		}
-		bar.update(subFoderTotal-1, subFoderTotal);
+		bar.update(subFoderTotal - 1, subFoderTotal);
 	}
 
 	public String getCultivarDir(int index) {
@@ -153,21 +152,21 @@ public class ModelRunManager {
 		System.out.println("Writing batch .v46 files");
 		ProgressBar bar = new ProgressBar();
 		int subFolderIndex = 0;
-		int subFoderTotal =  run.getCultivars().size();
+		int subFoderTotal = run.getCultivars().size();
 		bar.update(0, subFoderTotal);
-		
+
 		String temp = "";
 		for (CultivarRun cultivar : run.getCultivars()) {
-			
+
 			File dir = new File(getCultivarDir(cultivar.getIndex()) + "\\" + cultivar.getName());
 			dir.mkdirs();
 			File batch = new File(dir.getAbsolutePath() + "\\batch" + cultivar.getName() + ".v46");
-			try(PrintWriter writer = new PrintWriter(batch);) {
+			try (PrintWriter writer = new PrintWriter(batch);) {
 				cultivar.setBatch(batch);
-				
+
 				writer.println("$BATCH(CROP)");
 				writer.println("@FILEX                                                                                        TRTNO     RP     SQ     OP     CO");
-				for(Integer id: run.getCultivarTreatments()){
+				for (Integer id : run.getCultivarTreatments()) {
 					temp = String.format("%1$-94s %2$4s %3$6s %4$6s %5$6s %6$6s", cultivar.getFileX().getAbsolutePath(), id, 1, 0, 0, 0);
 					writer.println(temp);
 				}
@@ -175,21 +174,21 @@ public class ModelRunManager {
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
-			
+
 			// progress bar update
 			subFolderIndex++;
 			if (subFolderIndex % 100 == 0) {
 				bar.update(subFolderIndex, subFoderTotal);
 			}
 		}
-		bar.update(subFoderTotal-1, subFoderTotal);
+		bar.update(subFoderTotal - 1, subFoderTotal);
 	}
 
 	private void writeFileX() {
 		System.out.println("Writing X files");
 		ProgressBar bar = new ProgressBar();
 		int subFolderIndex = 0;
-		int subFoderTotal =  run.getCultivars().size();
+		int subFoderTotal = run.getCultivars().size();
 		bar.update(0, subFoderTotal);
 
 		for (CultivarRun cultivar : run.getCultivars()) {
@@ -197,32 +196,28 @@ public class ModelRunManager {
 			File dir = new File(getCultivarDir(cultivar.getIndex()) + "\\" + cultivar.getName());
 			dir.mkdirs();
 
-			/**this is not necessary anymore, the summary handle to get the measured values*/
+			/** this is not necessary anymore, the summary handle to get the measured values */
 			/* copying file A */
-			/*File targetA = new File(dir.getAbsolutePath() + "\\" + cultivar.getName() + ".BNA");
-			try {
-				Files.copy(run.getModel().getFileA().toPath(), targetA.toPath(), StandardCopyOption.REPLACE_EXISTING);
-			} catch (IOException e2) {
-				e2.printStackTrace();
-			}*/
-			
-			/**this is not necessary anymore, the summary handle to get the measured values*/
+			/*
+			 * File targetA = new File(dir.getAbsolutePath() + "\\" + cultivar.getName() + ".BNA"); try {
+			 * Files.copy(run.getModel().getFileA().toPath(), targetA.toPath(), StandardCopyOption.REPLACE_EXISTING); }
+			 * catch (IOException e2) { e2.printStackTrace(); }
+			 */
+
+			/** this is not necessary anymore, the summary handle to get the measured values */
 			/* copying file T */
-			/*File targetT = new File(dir.getAbsolutePath() + "\\" + cultivar.getName() + ".BNT");
-			try {
-				Files.copy(run.getModel().getFileT().toPath(), targetT.toPath(), StandardCopyOption.REPLACE_EXISTING);
-			} catch (IOException e2) {
-				e2.printStackTrace();
-			}*/
+			/*
+			 * File targetT = new File(dir.getAbsolutePath() + "\\" + cultivar.getName() + ".BNT"); try {
+			 * Files.copy(run.getModel().getFileT().toPath(), targetT.toPath(), StandardCopyOption.REPLACE_EXISTING); }
+			 * catch (IOException e2) { e2.printStackTrace(); }
+			 */
 
 			/* generating file X */
 			File mergedFile = new File(dir.getAbsolutePath() + "\\" + cultivar.getName() + ".BNX");
 			cultivar.setFileX(mergedFile);
 
-			try(BufferedReader inHead = new BufferedReader(new InputStreamReader(new FileInputStream(run.getModel().getFileXHead())));
-					BufferedReader inTail = new BufferedReader(new InputStreamReader(new FileInputStream(run.getModel().getFileXTail())));
-						PrintWriter writer = new PrintWriter(new FileWriter(mergedFile, true));) {
-			
+			try (BufferedReader inHead = new BufferedReader(new InputStreamReader(new FileInputStream(run.getModel().getFileXHead()))); BufferedReader inTail = new BufferedReader(new InputStreamReader(new FileInputStream(run.getModel().getFileXTail()))); PrintWriter writer = new PrintWriter(new FileWriter(mergedFile, true));) {
+
 				/* Adding FileX head */
 				String aLineHead;
 				while ((aLineHead = inHead.readLine()) != null) {
@@ -242,43 +237,74 @@ public class ModelRunManager {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			
+
 			// progress bar update
 			subFolderIndex++;
 			if (subFolderIndex % 100 == 0) {
 				bar.update(subFolderIndex, subFoderTotal);
 			}
 		}
-		bar.update(subFoderTotal-1, subFoderTotal);
+		bar.update(subFoderTotal - 1, subFoderTotal);
 	}
 
 	private void writeCultivars() {
 		System.out.println("Writing .CUL file");
-		/*ProgressBar bar = new ProgressBar();
-		int subFolderIndex = 0;
-		int subFoderTotal =  run.getCultivars().size();
-		bar.update(0, subFoderTotal);*/
-		
-		int i = 0;
+		/*
+		 * ProgressBar bar = new ProgressBar(); int subFolderIndex = 0; int subFoderTotal = run.getCultivars().size();
+		 * bar.update(0, subFoderTotal);
+		 */
+
 		DecimalFormat nf = new DecimalFormat("000000");
-		try(BufferedReader inHead = new BufferedReader(new InputStreamReader(new FileInputStream(run.getModel().getFileCULHead())));
-				PrintWriter writer = new PrintWriter("cultivars.CUL");) {
+		try (BufferedReader inHead = new BufferedReader(new InputStreamReader(new FileInputStream(run.getModel().getFileCULHead()))); BufferedWriter CULWriter = new BufferedWriter(new PrintWriter("cultivars.CUL")); /*BufferedWriter JSONWriter = new BufferedWriter(new PrintWriter("cultivars.json"))*/) {
 
 			String aLineHead;
 			while ((aLineHead = inHead.readLine()) != null) {
-				writer.println(aLineHead);
+				CULWriter.write(aLineHead);
+				CULWriter.newLine();
+				if (aLineHead.contains("ECO#")) {
+					aLineHead = aLineHead.split("#")[2];
+
+					/* Leave the line with only one space of separation */
+					while (aLineHead.contains("  ")) {
+						aLineHead = aLineHead.replaceAll("  ", " ");
+					}
+					aLineHead = aLineHead.trim();
+
+					namesOfVariables = aLineHead.split(" "); // divide in spaces
+				}
 
 			}
 
-			for (String combination : getCombinationsToPrint()) {
-				run.getCultivars().add(new CultivarRun(nf.format(i++) + "", i));
-				writer.println(combination);
+			String temp;
+			int i = 0;
+			for (String combination : run.obtainCombinations()) {
+				run.getCultivars().add(new CultivarRun(nf.format(i++) + "", i));// adding candiate to the count
+
+				// write in .CUL
+				temp = nf.format(i) + " " + run.getVrName() + " " + run.getEco() + " " + combination + "";
+				CULWriter.write(temp);
+				CULWriter.newLine();
+
 				
-				// progress bar update
-				/*subFolderIndex++;
-				if (subFolderIndex % 10 == 0) {
-					bar.update(subFolderIndex, subFoderTotal);
-				}*/
+				// write in .JSON
+				/*JSONWriter.write("{\"index\":{\"_index\":\"summary\",\"_type\":\"candidate\",\"_id\":" + i + "}}");
+				JSONWriter.newLine();
+				JSONWriter.write("{");
+				
+				temp=combination;
+				while (temp.contains("  ")) {
+					temp = temp.replaceAll("  ", " ");
+				}
+				temp = temp.trim();
+				String[] combinationSplited= temp.split(" ");
+				
+				for (int index = 0; index < combinationSplited.length; index++) {
+					// printing in JSON 
+					JSONWriter.write("\"" + namesOfVariables[index] + "\":" + combinationSplited[index] + ",");
+				}
+				JSONWriter.write("\"" + "RUN" + "\":" + i);
+				JSONWriter.write("}");
+				JSONWriter.newLine(); */
 			}
 
 		} catch (FileNotFoundException e) {
@@ -287,19 +313,6 @@ public class ModelRunManager {
 			e.printStackTrace();
 		}
 		System.out.println("100%");
-	}
-
-	private ArrayList<String> getCombinationsToPrint() {
-		String temp;
-		ArrayList<String> newCombinations = new ArrayList<String>();
-		DecimalFormat nf = new DecimalFormat("000000");
-		int i = 0;
-		for (String combination : run.obtainCombinations()) {
-			temp = nf.format(i++) + " " + run.getVrName() + " " + run.getEco() + " " + combination + "";
-			newCombinations.add(temp);
-		}
-		return newCombinations;
-
 	}
 
 }
