@@ -19,7 +19,6 @@ import org.ciat.cmit.model.ProgressBar;
 public class ModelRunManager {
 
 	private CropModelRun run;
-	private String[] namesOfVariables;
 
 	public ModelRunManager(CropModelRun run) {
 		super();
@@ -196,21 +195,6 @@ public class ModelRunManager {
 			File dir = new File(getCultivarDir(cultivar.getIndex()) + "\\" + cultivar.getName());
 			dir.mkdirs();
 
-			/** this is not necessary anymore, the summary handle to get the measured values */
-			/* copying file A */
-			/*
-			 * File targetA = new File(dir.getAbsolutePath() + "\\" + cultivar.getName() + ".BNA"); try {
-			 * Files.copy(run.getModel().getFileA().toPath(), targetA.toPath(), StandardCopyOption.REPLACE_EXISTING); }
-			 * catch (IOException e2) { e2.printStackTrace(); }
-			 */
-
-			/** this is not necessary anymore, the summary handle to get the measured values */
-			/* copying file T */
-			/*
-			 * File targetT = new File(dir.getAbsolutePath() + "\\" + cultivar.getName() + ".BNT"); try {
-			 * Files.copy(run.getModel().getFileT().toPath(), targetT.toPath(), StandardCopyOption.REPLACE_EXISTING); }
-			 * catch (IOException e2) { e2.printStackTrace(); }
-			 */
 
 			/* generating file X */
 			File mergedFile = new File(dir.getAbsolutePath() + "\\" + cultivar.getName() + ".BNX");
@@ -261,18 +245,6 @@ public class ModelRunManager {
 			while ((aLineHead = inHead.readLine()) != null) {
 				CULWriter.write(aLineHead);
 				CULWriter.newLine();
-				if (aLineHead.contains("ECO#")) {
-					aLineHead = aLineHead.split("#")[2];
-
-					/* Leave the line with only one space of separation */
-					while (aLineHead.contains("  ")) {
-						aLineHead = aLineHead.replaceAll("  ", " ");
-					}
-					aLineHead = aLineHead.trim();
-
-					namesOfVariables = aLineHead.split(" "); // divide in spaces
-				}
-
 			}
 
 			String temp;
@@ -284,27 +256,8 @@ public class ModelRunManager {
 				temp = nf.format(i) + " " + run.getVrName() + " " + run.getEco() + " " + combination + "";
 				CULWriter.write(temp);
 				CULWriter.newLine();
+				
 
-				
-				// write in .JSON
-				/*JSONWriter.write("{\"index\":{\"_index\":\"summary\",\"_type\":\"candidate\",\"_id\":" + i + "}}");
-				JSONWriter.newLine();
-				JSONWriter.write("{");
-				
-				temp=combination;
-				while (temp.contains("  ")) {
-					temp = temp.replaceAll("  ", " ");
-				}
-				temp = temp.trim();
-				String[] combinationSplited= temp.split(" ");
-				
-				for (int index = 0; index < combinationSplited.length; index++) {
-					// printing in JSON 
-					JSONWriter.write("\"" + namesOfVariables[index] + "\":" + combinationSplited[index] + ",");
-				}
-				JSONWriter.write("\"" + "RUN" + "\":" + i);
-				JSONWriter.write("}");
-				JSONWriter.newLine(); */
 			}
 
 		} catch (FileNotFoundException e) {
