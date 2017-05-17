@@ -239,7 +239,7 @@ public class ModelRunManager {
 		 */
 
 		DecimalFormat nf = new DecimalFormat("000000");
-		try (BufferedReader inHead = new BufferedReader(new InputStreamReader(new FileInputStream(run.getModel().getFileCULHead()))); BufferedWriter CULWriter = new BufferedWriter(new PrintWriter("cultivars.CUL")); /*BufferedWriter JSONWriter = new BufferedWriter(new PrintWriter("cultivars.json"))*/) {
+		try (BufferedReader inHead = new BufferedReader(new InputStreamReader(new FileInputStream(run.getModel().getFileCULHead()))); BufferedWriter CULWriter = new BufferedWriter(new PrintWriter(App.prop.getProperty("crop.name")+".CUL"))) {
 
 			String aLineHead;
 			while ((aLineHead = inHead.readLine()) != null) {

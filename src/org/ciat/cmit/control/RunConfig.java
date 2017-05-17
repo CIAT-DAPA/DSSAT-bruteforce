@@ -15,22 +15,23 @@ public class RunConfig {
 
 	public ModelRunManager getModelRunManager(File config) {
 		List<CoefficientDomain> domains = new ArrayList<CoefficientDomain>();
-		try {
-			Scanner reader = new Scanner(config);
 
-			String modelName = reader.nextLine();
-			String modelShortName = reader.nextLine();
-			String fileA = reader.nextLine();
-			String fileT = reader.nextLine();
-			String fileXHead = reader.nextLine();
-			String fileXTail = reader.nextLine();
-			String culHead = reader.nextLine();
-			String maxFiles = reader.nextLine();
-			String vrname = reader.nextLine();
-			String eco = reader.nextLine();
+			
+
+			String modelName = App.prop.getProperty("model.name");
+			String modelShortName = App.prop.getProperty("crop.shortname");
+			String fileA = App.prop.getProperty("fileA.location");
+			String fileT = App.prop.getProperty("fileT.location");
+			String fileXHead = App.prop.getProperty("fileX.head.location");
+			String fileXTail = App.prop.getProperty("fileX.tail.location");
+			String culHead = App.prop.getProperty("fileCUL.head.location");
+			String maxFiles = App.prop.getProperty("subfolders.numer");
+			String vrname = App.prop.getProperty("CUL.varname");
+			String eco = App.prop.getProperty("CUL.ECO");
+			int n=Integer.parseInt(App.prop.getProperty("variable.number"));
 			String domi = "";
-			while (reader.hasNextLine()) {
-				domi = reader.nextLine();
+			for(int i=0;i<n;) {
+				domi = App.prop.getProperty("variable"+ ++i);
 				String param[] = domi.split(" ");
 				domains.add(new CoefficientDomain(Double.parseDouble(param[0]), Double.parseDouble(param[1]), Double.parseDouble(param[2]), new DecimalFormat(param[3]), "%1$" + param[4] + "s"));
 			}
@@ -38,13 +39,11 @@ public class RunConfig {
 			CropModelRun mr = new CropModelRun(domains, model, Integer.parseInt(maxFiles), vrname, eco, getTreatments(new File(fileXHead)));
 			ModelRunManager mrg = new ModelRunManager(mr);
 
-			reader.close();
+
 
 			return mrg;
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		return getModelRunManagerBean();
+
+		
 
 	}
 
