@@ -27,16 +27,16 @@ public class App {
 		log = app.obtainLogger();
 		prop = app.obtainProperties();
 		ModelRunManager mgr;
-		File config = new File("config.txt");
+		File config = new File("config.properties");
 		RunConfig rc = new RunConfig();
 
 		if (config.exists()) {
 			mgr = rc.getModelRunManager(config);
+			mgr.work();
 
 		} else {
-			mgr = rc.getModelRunManagerMaize();
+			App.log.severe("Configuration not found");
 		}
-		mgr.work();
 	}
 	
 	private Logger obtainLogger() {
@@ -55,7 +55,7 @@ public class App {
 			logger.removeHandler(handler);
 		}
 		try {
-			fileHandler = new FileHandler(runName + "_summary.log");
+			fileHandler = new FileHandler(runName + "_run.log");
 			consoleHandler = new ConsoleHandler();
 			fileHandler.setLevel(Level.FINE);
 			consoleHandler.setLevel(Level.FINE);
