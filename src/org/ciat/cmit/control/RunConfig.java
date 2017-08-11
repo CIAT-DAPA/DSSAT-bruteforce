@@ -25,7 +25,7 @@ public class RunConfig {
 			String fileXHead = App.prop.getProperty("fileX.head.location");
 			String fileXTail = App.prop.getProperty("fileX.tail.location");
 			String culHead = App.prop.getProperty("fileCUL.head.location");
-			String maxFiles = App.prop.getProperty("subfolders.numer");
+			String maxFiles = App.prop.getProperty("subfolders.number");
 			String vrname = App.prop.getProperty("CUL.varname");
 			String eco = App.prop.getProperty("CUL.ECO");
 			int n=Integer.parseInt(App.prop.getProperty("variable.number"));

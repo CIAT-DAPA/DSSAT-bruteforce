@@ -250,14 +250,14 @@ public class ModelRunManager {
 			String temp;
 			int i = 0;
 			for (String combination : run.obtainCombinations()) {
-				run.getCultivars().add(new CultivarRun(nf.format(i++) + "", i));// adding candiate to the count
+				run.getCultivars().add(new CultivarRun(nf.format(i) + "", i));// adding candidate to the count
 
 				// write in .CUL
 				temp = nf.format(i) + " " + run.getVrName() + " " + run.getEco() + " " + combination + "";
 				CULWriter.write(temp);
 				CULWriter.newLine();
 				
-
+				i++;
 			}
 
 		} catch (FileNotFoundException e) {
