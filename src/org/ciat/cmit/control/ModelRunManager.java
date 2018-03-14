@@ -114,19 +114,19 @@ public class ModelRunManager {
 		bar.update(0, subFoderTotal);
 
 		for (CultivarRun cultivar : run.getCultivars()) {
-			;
+			
 			File batDir = new File(getCultivarDir(cultivar.getIndex()) + "\\" + cultivar.getName());
 			batDir.mkdirs();
 			File bat = new File(batDir.getAbsolutePath() + "\\" + cultivar.getName() + ".bat");
 			cultivar.setBat(bat);
 			try (PrintWriter writer = new PrintWriter(bat)) {
 
-				writer.println("C:\\DSSAT46\\dscsm046 " + run.getModel().getName() + " B " + cultivar.getBatch().getAbsolutePath());
-				writer.println("rename PlantGro.OUT summary.txt");
-				writer.println("rename Overview.OUT overview.txt");
-				writer.println("del *.OUT");
-				writer.println("rename summary.txt PlantGro.OUT");
-				writer.println("rename overview.txt Overview.OUT");
+				writer.println("C:\\DSSAT47\\dscsm047 " + run.getModel().getName() + " B " + cultivar.getBatch().getName());
+				// writer.println("rename PlantGro.OUT summary.txt");
+				// writer.println("rename Overview.OUT overview.txt");
+				// writer.println("del *.OUT");
+				// writer.println("rename summary.txt PlantGro.OUT");
+				// writer.println("rename overview.txt Overview.OUT");
 				writer.println("@echo off");
 				writer.println("exit");
 
@@ -148,7 +148,7 @@ public class ModelRunManager {
 	}
 
 	private void writeBatchs() {
-		System.out.println("Writing batch .v46 files");
+		System.out.println("Writing batch .v47 files");
 		ProgressBar bar = new ProgressBar();
 		int subFolderIndex = 0;
 		int subFoderTotal = run.getCultivars().size();
@@ -159,14 +159,14 @@ public class ModelRunManager {
 
 			File dir = new File(getCultivarDir(cultivar.getIndex()) + "\\" + cultivar.getName());
 			dir.mkdirs();
-			File batch = new File(dir.getAbsolutePath() + "\\batch" + cultivar.getName() + ".v46");
+			File batch = new File(dir.getAbsolutePath() + "\\batch" + cultivar.getName() + ".v47");
 			try (PrintWriter writer = new PrintWriter(batch);) {
 				cultivar.setBatch(batch);
 
 				writer.println("$BATCH(CROP)");
 				writer.println("@FILEX                                                                                        TRTNO     RP     SQ     OP     CO");
 				for (Integer id : run.getCultivarTreatments()) {
-					temp = String.format("%1$-94s %2$4s %3$6s %4$6s %5$6s %6$6s", cultivar.getFileX().getAbsolutePath(), id, 1, 0, 0, 0);
+					temp = String.format("%1$-94s %2$4s %3$6s %4$6s %5$6s %6$6s", cultivar.getFileX().getName(), id, 1, 0, 0, 0);
 					writer.println(temp);
 				}
 
@@ -195,9 +195,8 @@ public class ModelRunManager {
 			File dir = new File(getCultivarDir(cultivar.getIndex()) + "\\" + cultivar.getName());
 			dir.mkdirs();
 
-
 			/* generating file X */
-			File mergedFile = new File(dir.getAbsolutePath() + "\\" + cultivar.getName() + ".BNX");
+			File mergedFile = new File(dir.getAbsolutePath() + "\\00" + cultivar.getName() + "." + run.getModel().getShortName() + "X");
 			cultivar.setFileX(mergedFile);
 
 			try (BufferedReader inHead = new BufferedReader(new InputStreamReader(new FileInputStream(run.getModel().getFileXHead()))); BufferedReader inTail = new BufferedReader(new InputStreamReader(new FileInputStream(run.getModel().getFileXTail()))); PrintWriter writer = new PrintWriter(new FileWriter(mergedFile, true));) {
@@ -239,7 +238,7 @@ public class ModelRunManager {
 		 */
 
 		DecimalFormat nf = new DecimalFormat("000000");
-		try (BufferedReader inHead = new BufferedReader(new InputStreamReader(new FileInputStream(run.getModel().getFileCULHead()))); BufferedWriter CULWriter = new BufferedWriter(new PrintWriter(App.prop.getProperty("crop.name")+".CUL"))) {
+		try (BufferedReader inHead = new BufferedReader(new InputStreamReader(new FileInputStream(run.getModel().getFileCULHead()))); BufferedWriter CULWriter = new BufferedWriter(new PrintWriter(run.getModel().getName() + ".CUL"))) {
 
 			String aLineHead;
 			while ((aLineHead = inHead.readLine()) != null) {
@@ -256,7 +255,7 @@ public class ModelRunManager {
 				temp = nf.format(i) + " " + run.getVrName() + " " + run.getEco() + " " + combination + "";
 				CULWriter.write(temp);
 				CULWriter.newLine();
-				
+
 				i++;
 			}
 
